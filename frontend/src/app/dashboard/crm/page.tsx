@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Users, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { SeedDataButton } from '@/components/ui/seed-data-button'
 
 export default async function CrmPage() {
     const supabase = await createClient()
@@ -83,7 +84,7 @@ export default async function CrmPage() {
                                                 <Users className="w-8 h-8 text-slate-300" />
                                             </div>
                                             <p className="text-sm">Aún no tienes contactos consolidados en el CRM.</p>
-                                            <Button variant="outline" size="sm" className="mt-2 text-indigo-600 border-indigo-200 bg-indigo-50" disabled>Importar DB</Button>
+                                            <SeedDataButton />
                                         </div>
                                     </TableCell>
                                 </TableRow>

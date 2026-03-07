@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { MessageSquareText, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { SeedDataButton } from "@/components/ui/seed-data-button"
 
 export default async function ConversationsPage() {
     const supabase = await createClient()
@@ -95,6 +96,7 @@ export default async function ConversationsPage() {
                                                 <MessageSquareText className="w-8 h-8 text-slate-300" />
                                             </div>
                                             <p className="text-sm">No tienes conversaciones activas en este momento.</p>
+                                            <SeedDataButton className="text-emerald-600 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 hover:text-emerald-700" />
                                         </div>
                                     </TableCell>
                                 </TableRow>
