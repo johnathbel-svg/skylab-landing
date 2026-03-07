@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BotFlow SaaS — Estrategia de Producto</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #6c63ff;
+    --accent2: #00e5ff;
+    --accent3: #ff6b6b;
+    --accent4: #ffd166;
+    --text: #e8e8f0;
+    --muted: #888899;
+    --green: #06d6a0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+
+  /* HEADER */
+  header {
+    padding: 4rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -120px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(108,99,255,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(108,99,255,0.15);
+    border: 1px solid rgba(108,99,255,0.4);
+    color: var(--accent);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  h1 {
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.2rem;
+  }
+
+  h1 span {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-style: italic;
+    font-family: 'Instrument Serif', serif;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 600px;
+    font-weight: 400;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .meta-item strong { color: var(--accent2); }
+
+  /* SECTIONS */
+  section { padding: 4rem 0; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.6rem;
+  }
+
+  p { color: var(--muted); line-height: 1.75; margin-bottom: 1rem; font-weight: 400; }
+
+  /* CARDS */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.2rem; margin-top: 2rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.6rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.2s;
+  }
+
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  .card-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .card .icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    background: linear-gradient(135deg, rgba(108,99,255,0.08), rgba(0,229,255,0.05));
+    border: 1px solid rgba(108,99,255,0.3);
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 2rem 0;
+  }
+
+  .highlight h3 { color: var(--accent2); margin-bottom: 0.5rem; }
+
+  /* TIERS */
+  .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+
+  .tier {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tier.featured {
+    border-color: var(--accent);
+    background: linear-gradient(160deg, rgba(108,99,255,0.1), var(--surface));
+  }
+
+  .tier.featured::before {
+    content: 'POPULAR';
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: var(--accent);
+    color: white;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .tier-name {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 0.5rem;
+  }
+
+  .tier-price {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .tier-price span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+
+  .tier ul { list-style: none; margin-top: 1.2rem; }
+  .tier ul li {
+    padding: 0.4rem 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+  }
+
+  .tier ul li::before { content: '→'; color: var(--accent2); flex-shrink: 0; margin-top: 0.1rem; }
+
+  /* PHASES */
+  .phase-list { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 2rem; }
+
+  .phase {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .phase-num {
+    width: 48px; height: 48px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .phase-content { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.4rem; }
+  .phase-content h3 { font-size: 1rem; color: var(--text); margin-bottom: 0.4rem; }
+  .phase-content p { font-size: 0.88rem; margin: 0; }
+
+  .phase-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.8rem; }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+
+  .tag.tech { color: var(--accent2); border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.05); }
+  .tag.biz { color: var(--accent4); border-color: rgba(255,209,102,0.3); background: rgba(255,209,102,0.05); }
+  .tag.design { color: var(--green); border-color: rgba(6,214,160,0.3); background: rgba(6,214,160,0.05); }
+
+  /* ARCHITECTURE */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 1fr 2px 1fr 2px 1fr;
+    gap: 0;
+    margin-top: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .arch-col { padding: 1.8rem; }
+  .arch-divider { background: var(--border); }
+  .arch-col h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 1rem; font-family: 'JetBrains Mono', monospace; }
+  .arch-item { padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.85rem; color: var(--muted); }
+  .arch-item:last-child { border: none; }
+
+  /* METRICS */
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; margin-top: 2rem; }
+
+  .metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.4rem;
+    text-align: center;
+  }
+
+  .metric-val {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .metric-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-family: 'JetBrains Mono', monospace; }
+
+  /* COMPETITION */
+  .comp-table { width: 100%; margin-top: 2rem; border-collapse: collapse; }
+  .comp-table th, .comp-table td {
+    padding: 0.9rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+
+  .comp-table th {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--surface);
+  }
+
+  .comp-table td { color: var(--muted); }
+  .comp-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .comp-table .you { color: var(--accent2); font-weight: 600; }
+  .comp-table .yes { color: var(--green); }
+  .comp-table .no { color: var(--accent3); }
+  .comp-table .partial { color: var(--accent4); }
+
+  /* FUNNEL */
+  .funnel { margin-top: 2rem; }
+  .funnel-step {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 0.6rem;
+    position: relative;
+  }
+
+  .funnel-step::after {
+    content: '↓';
+    position: absolute;
+    bottom: -1.1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--border);
+    font-size: 0.9rem;
+    z-index: 2;
+  }
+
+  .funnel-step:last-child::after { display: none; }
+
+  .funnel-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .funnel-text h4 { font-size: 0.95rem; margin-bottom: 0.2rem; }
+  .funnel-text p { font-size: 0.82rem; margin: 0; }
+
+  /* STACK */
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem; }
+
+  .stack-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem;
+  }
+
+  .stack-card h4 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 0.8rem;
+  }
+
+  .stack-item {
+    font-size: 0.82rem;
+    color: var(--muted);
+    padding: 0.3rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .stack-item:last-child { border: none; }
+  .stack-item span { color: var(--text); font-weight: 500; }
+
+  /* PERSONAS */
+  .persona-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; margin-top: 2rem; }
+
+  .persona {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.4rem;
+    text-align: center;
+  }
+
+  .persona-emoji { font-size: 2.5rem; margin-bottom: 0.8rem; display: block; }
+  .persona h3 { font-size: 0.95rem; margin-bottom: 0.4rem; }
+  .persona .role { font-size: 0.75rem; color: var(--accent2); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.8rem; }
+  .persona p { font-size: 0.82rem; }
+
+  /* FINAL CTA */
+  .cta-block {
+    text-align: center;
+    padding: 5rem 0;
+    position: relative;
+  }
+
+  .cta-block::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(108,99,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-block h2 { font-size: clamp(2rem, 4vw, 3.5rem); margin-bottom: 1rem; position: relative; }
+  .cta-block p { max-width: 500px; margin: 0 auto 2rem; font-size: 1rem; position: relative; }
+
+  .btn-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; position: relative; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.8rem;
+    border-radius: 6px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+  }
+
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+  /* TABLE OF CONTENTS */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.3rem 2rem;
+  }
+
+  .toc-item {
+    font-size: 0.85rem;
+    color: var(--muted);
+    padding: 0.3rem 0;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .toc-item span { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text { font-size: 0.7rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; }
+
+  @media (max-width: 700px) {
+    .arch-grid { grid-template-columns: 1fr; }
+    .arch-divider { display: none; }
+    .phase { grid-template-columns: 1fr; }
+    .phase-num { width: 36px; height: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="badge">// Documento Estratégico v1.0 — Confidencial</div>
+    <h1>
+      La plataforma que convierte<br>
+      cada negocio en un<br>
+      <span>ecosistema inteligente</span>
+    </h1>
+    <p class="subtitle">
+      Estrategia completa para construir un SaaS de chatbots + CRM multicanal, adaptable a cualquier industria, con arquitectura escalable y un modelo de negocio validado.
+    </p>
+    <div class="header-meta">
+      <div class="meta-item"><strong>Mercado objetivo:</strong> LATAM + España</div>
+      <div class="meta-item"><strong>Tipo:</strong> B2B SaaS</div>
+      <div class="meta-item"><strong>Stage:</strong> Pre-MVP</div>
+      <div class="meta-item"><strong>Modelo:</strong> Subscription + Usage</div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div style="padding: 2rem 0 0;">
+    <p style="color: var(--muted); font-size: 0.85rem;">Índice de contenidos</p>
+    <div class="toc">
+      <div class="toc-item"><span>01</span> Visión del producto</div>
+      <div class="toc-item"><span>02</span> Análisis de mercado</div>
+      <div class="toc-item"><span>03</span> Personas objetivo</div>
+      <div class="toc-item"><span>04</span> Arquitectura del producto</div>
+      <div class="toc-item"><span>05</span> Onboarding & Builder</div>
+      <div class="toc-item"><span>06</span> Módulos del ecosistema</div>
+      <div class="toc-item"><span>07</span> Stack tecnológico</div>
+      <div class="toc-item"><span>07B</span> Telegram fast-track ⭐</div>
+      <div class="toc-item"><span>07C</span> Tutoriales Meta/WhatsApp ⭐</div>
+      <div class="toc-item"><span>07D</span> Gemini RAG + Google Sheets ⭐</div>
+      <div class="toc-item"><span>07E</span> Motor de humanización ⭐</div>
+      <div class="toc-item"><span>08</span> Modelo de negocio</div>
+      <div class="toc-item"><span>09</span> Roadmap MVP → v2</div>
+      <div class="toc-item"><span>10</span> Estrategia Go-to-Market</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECCIÓN 1: VISIÓN -->
+<section>
+  <div class="container">
+    <div class="section-label">// 01 — Visión del producto</div>
+    <h2>No solo un chatbot.<br>Un sistema nervioso para el negocio.</h2>
+    <p>
+      La mayoría de las soluciones del mercado ofrecen chatbots aislados. El diferencial aquí es construir un <strong style="color:var(--text)">ecosistema completo</strong>: desde el primer mensaje de un cliente hasta el cierre de una venta, con datos, automatizaciones y gestión centralizada.
+    </p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent), var(--accent2));"></div>
+        <span class="icon">🧠</span>
+        <h3>Base de conocimiento propia</h3>
+        <p>Cada cliente sube su información (PDFs, URLs, productos, FAQs) y el bot aprende de ella con RAG.</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent2), var(--green));"></div>
+        <span class="icon">🎛️</span>
+        <h3>CRM integrado</h3>
+        <p>Pipeline de leads, historial de conversaciones, segmentación automática y análisis de intención.</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--green), var(--accent4));"></div>
+        <span class="icon">⚡</span>
+        <h3>Multi-canal & multi-modal</h3>
+        <p>Web, WhatsApp, Instagram DM. Texto, voz e imagen. Un solo panel para controlarlo todo.</p>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <h3>🎯 Propuesta de valor central</h3>
+      <p style="margin:0; font-size: 1rem; color: var(--text);">"En menos de 30 minutos, cualquier dueño de negocio tiene un asistente de IA entrenado con su información, integrado en sus canales y conectado a un CRM que le dice quién está listo para comprar."</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 2: MERCADO -->
+<section>
+  <div class="container">
+    <div class="section-label">// 02 — Análisis de mercado y competencia</div>
+    <h2>Un mercado de $40B+ con<br>poca penetración en LATAM</h2>
+
+    <div class="metric-grid">
+      <div class="metric">
+        <div class="metric-val" style="color: var(--accent);">$40B</div>
+        <div class="metric-label">Mercado chatbots 2027</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" style="color: var(--accent2);">23%</div>
+        <div class="metric-label">CAGR proyectado</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" style="color: var(--green);">12M+</div>
+        <div class="metric-label">PYMEs en LATAM</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" style="color: var(--accent4);">3%</div>
+        <div class="metric-label">Penetración actual IA PYME</div>
+      </div>
+    </div>
+
+    <div class="divider"><div class="divider-line"></div><div class="divider-text">COMPETIDORES DIRECTOS</div><div class="divider-line"></div></div>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Plataforma</th>
+          <th>Builder visual</th>
+          <th>CRM propio</th>
+          <th>Base conocimiento</th>
+          <th>Multi-modal</th>
+          <th>Precio aprox/mes</th>
+          <th>Foco LATAM</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--text)">Tidio</strong></td>
+          <td class="yes">✓</td>
+          <td class="partial">Básico</td>
+          <td class="no">✗</td>
+          <td class="no">✗</td>
+          <td>$29–$749</td>
+          <td class="no">✗</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">Manychat</strong></td>
+          <td class="yes">✓</td>
+          <td class="no">✗</td>
+          <td class="no">✗</td>
+          <td class="partial">Parcial</td>
+          <td>$15–$169</td>
+          <td class="partial">Parcial</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">Botpress</strong></td>
+          <td class="yes">✓</td>
+          <td class="no">✗</td>
+          <td class="yes">✓</td>
+          <td class="no">✗</td>
+          <td>$0–$495</td>
+          <td class="no">✗</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">Intercom</strong></td>
+          <td class="partial">Limitado</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="no">✗</td>
+          <td>$74–$999+</td>
+          <td class="no">✗</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">BuildChatbot.ai</strong></td>
+          <td class="yes">✓</td>
+          <td class="no">✗</td>
+          <td class="yes">✓</td>
+          <td class="partial">Parcial</td>
+          <td>$19–$99</td>
+          <td class="no">✗</td>
+        </tr>
+        <tr style="background: rgba(108,99,255,0.05);">
+          <td class="you">⭐ TU PLATAFORMA</td>
+          <td class="yes">✓ Guiado</td>
+          <td class="yes">✓ Completo</td>
+          <td class="yes">✓ RAG + Docs</td>
+          <td class="yes">✓ Texto/Voz/Img</td>
+          <td class="you">$29–$199</td>
+          <td class="yes">✓ Español</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:1rem; font-size: 0.82rem;">Tu ventaja: el único SaaS nativo en español, con CRM integrado + base de conocimiento + soporte multimodal + onboarding guiado por industria — todo en un solo producto con precio accesible para PYMEs latinoamericanas.</p>
+  </div>
+</section>
+
+<!-- SECCIÓN 3: PERSONAS -->
+<section>
+  <div class="container">
+    <div class="section-label">// 03 — Personas objetivo</div>
+    <h2>¿Quién compra esto?</h2>
+    <p>Segmentos primarios con mayor urgencia, capacidad de pago y boca a boca:</p>
+
+    <div class="persona-grid">
+      <div class="persona">
+        <span class="persona-emoji">🏥</span>
+        <h3>Clínicas y consultorios</h3>
+        <div class="role">Médicos, dentistas, psicólogos</div>
+        <p>Agendar citas 24/7, recordatorios, FAQ de procedimientos, seguimiento post-consulta.</p>
+      </div>
+      <div class="persona">
+        <span class="persona-emoji">🛍️</span>
+        <h3>E-commerce y tiendas</h3>
+        <div class="role">Dueños de tiendas online/físicas</div>
+        <p>Consultas de productos, disponibilidad, rastreo de pedidos, recomendaciones personalizadas.</p>
+      </div>
+      <div class="persona">
+        <span class="persona-emoji">🏋️</span>
+        <h3>Gimnasios y bienestar</h3>
+        <div class="role">Gimnasios, yoga, nutrición</div>
+        <p>Planes de membresía, clases disponibles, nutrición personalizada, seguimiento de miembros.</p>
+      </div>
+      <div class="persona">
+        <span class="persona-emoji">🏨</span>
+        <h3>Hospitalidad y turismo</h3>
+        <div class="role">Hoteles, restaurantes, agencias</div>
+        <p>Reservas, menús, disponibilidad, recomendaciones locales y gestión de quejas.</p>
+      </div>
+      <div class="persona">
+        <span class="persona-emoji">🎓</span>
+        <h3>Educación y cursos</h3>
+        <div class="role">Academias, coaches, tutores</div>
+        <p>Inscripciones, dudas frecuentes, seguimiento de alumnos, recuerdo de pagos.</p>
+      </div>
+      <div class="persona">
+        <span class="persona-emoji">🏗️</span>
+        <h3>Inmobiliarias y servicios</h3>
+        <div class="role">Agentes, fontaneros, abogados</div>
+        <p>Calificación de leads, agendado de visitas, cotizaciones automáticas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 4: ARQUITECTURA -->
+<section>
+  <div class="container">
+    <div class="section-label">// 04 — Arquitectura del producto</div>
+    <h2>Tres capas que forman<br>el ecosistema completo</h2>
+
+    <div class="arch-grid">
+      <div class="arch-col">
+        <h3>🧩 Capa de Experiencia</h3>
+        <div class="arch-item">Dashboard del cliente (CRM)</div>
+        <div class="arch-item">Builder de chatbot guiado</div>
+        <div class="arch-item">Chat widget embebible</div>
+        <div class="arch-item">App móvil (notificaciones)</div>
+        <div class="arch-item">Portal de analytics</div>
+        <div class="arch-item">Editor de flujos visuales</div>
+      </div>
+      <div class="arch-divider"></div>
+      <div class="arch-col">
+        <h3>⚙️ Capa de Inteligencia</h3>
+        <div class="arch-item">Motor RAG (LangChain)</div>
+        <div class="arch-item">Vector DB por tenant</div>
+        <div class="arch-item">Modelos base (GPT-4o / Claude)</div>
+        <div class="arch-item">NLP intent & sentiment</div>
+        <div class="arch-item">Speech-to-Text (Whisper)</div>
+        <div class="arch-item">Vision API (imágenes)</div>
+      </div>
+      <div class="arch-divider"></div>
+      <div class="arch-col">
+        <h3>🔌 Capa de Integración</h3>
+        <div class="arch-item">WhatsApp Business API + tutorial guiado</div>
+        <div class="arch-item">Telegram Bot API (setup en 5 min)</div>
+        <div class="arch-item">Instagram Graph API</div>
+        <div class="arch-item">Google Sheets bidireccional</div>
+        <div class="arch-item">Google Calendar / Cal.com</div>
+        <div class="arch-item">Zapier / Make + Stripe / MercadoPago</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top: 2rem;">
+      <h3>🔒 Seguridad multi-tenant</h3>
+      <p style="margin:0; color: var(--muted);">Cada cliente es un tenant completamente aislado: su base de conocimiento, sus conversaciones y sus datos de clientes son inaccesibles para otros tenants. Cifrado en reposo (AES-256) y en tránsito (TLS 1.3). Opción de GDPR compliance para clientes europeos. Auditoría de accesos con logs inmutables.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 5: ONBOARDING -->
+<section>
+  <div class="container">
+    <div class="section-label">// 05 — Onboarding & Bot Builder</div>
+    <h2>Del registro al bot funcional<br>en menos de 30 minutos</h2>
+    <p>El flujo de onboarding es el corazón del producto. Debe ser tan simple que hasta un dueño de negocio sin conocimientos técnicos pueda completarlo solo.</p>
+
+    <div class="funnel" style="max-width: 700px; margin: 0 auto;">
+      <div class="funnel-step">
+        <div class="funnel-icon">🏢</div>
+        <div class="funnel-text">
+          <h4>Paso 1 — Información del negocio</h4>
+          <p>Nombre, industria (selector visual con íconos), descripción, horarios, ubicación, idioma. Selector de "tipo de bot": atención, ventas, agenda o mixto.</p>
+        </div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-icon">📁</div>
+        <div class="funnel-text">
+          <h4>Paso 2 — Base de conocimiento</h4>
+          <p>Subir PDFs de catálogos, menús, precios. Pegar URL del sitio web (scraping automático). Escribir FAQs manualmente. Importar productos desde CSV o Shopify.</p>
+        </div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-icon">🎨</div>
+        <div class="funnel-text">
+          <h4>Paso 3 — Personalidad del bot</h4>
+          <p>Nombre del asistente, avatar, tono (formal/amigable/técnico), idioma principal, mensajes de bienvenida y despedida. Generación automática sugerida con IA.</p>
+        </div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-icon">⚡</div>
+        <div class="funnel-text">
+          <h4>Paso 4 — Flujos automáticos</h4>
+          <p>Templates pre-construidos por industria: "Agendar cita", "Consultar precio", "Escalar a humano". Activar/desactivar con toggle. Sin código.</p>
+        </div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-icon">🔗</div>
+        <div class="funnel-text">
+          <h4>Paso 5 — Canales de distribución</h4>
+          <p>Copiar código del widget web. Conectar WhatsApp Business con QR. Conectar Instagram en 2 clics. Preview en tiempo real antes de publicar.</p>
+        </div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-icon">🚀</div>
+        <div class="funnel-text">
+          <h4>✓ Bot en producción</h4>
+          <p>El negocio ya tiene su asistente activo. Se inicia el período de prueba de 14 días. El CRM empieza a poblar leads automáticamente.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 6: MÓDULOS -->
+<section>
+  <div class="container">
+    <div class="section-label">// 06 — Módulos del ecosistema</div>
+    <h2>Más allá del chatbot:<br>un sistema de crecimiento</h2>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent), transparent);"></div>
+        <span class="icon">💬</span>
+        <h3>Chat Engine</h3>
+        <p>El motor de conversación con memoria contextual, RAG sobre la base de conocimiento del cliente y escalado automático a humano. Soporta texto, voz e imagen según el plan.</p>
+        <div class="phase-tags" style="margin-top: 1rem;">
+          <span class="tag tech">RAG</span>
+          <span class="tag tech">Vector DB</span>
+          <span class="tag tech">Whisper</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent2), transparent);"></div>
+        <span class="icon">📊</span>
+        <h3>CRM de Conversaciones</h3>
+        <p>Cada conversación crea o actualiza un contacto. Pipeline visual de leads, etiquetas, historial completo, notas internas y asignación a agentes humanos.</p>
+        <div class="phase-tags" style="margin-top: 1rem;">
+          <span class="tag biz">Leads</span>
+          <span class="tag biz">Pipeline</span>
+          <span class="tag biz">Segmentación</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--green), transparent);"></div>
+        <span class="icon">🤖</span>
+        <h3>Automatizaciones</h3>
+        <p>Reglas tipo "si el lead dijo X, hacer Y". Recordatorios de citas, seguimientos post-visita, campañas de reactivación. Integración con Google Calendar y CRMs externos.</p>
+        <div class="phase-tags" style="margin-top: 1rem;">
+          <span class="tag tech">Webhooks</span>
+          <span class="tag tech">Zapier</span>
+          <span class="tag biz">Workflows</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent4), transparent);"></div>
+        <span class="icon">📈</span>
+        <h3>Analytics & Insights</h3>
+        <p>Dashboard con tasa de resolución, conversaciones por canal, temas más frecuentes, leads calificados vs fríos, horas pico de actividad y NPS automático.</p>
+        <div class="phase-tags" style="margin-top: 1rem;">
+          <span class="tag design">KPIs</span>
+          <span class="tag design">Heatmaps</span>
+          <span class="tag biz">Reportes</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent3), transparent);"></div>
+        <span class="icon">🏪</span>
+        <h3>Gestión de Conocimiento</h3>
+        <p>Administrar y actualizar la base de datos del bot: agregar productos, editar precios, subir nuevos documentos. El bot aprende al instante sin re-entrenamiento.</p>
+        <div class="phase-tags" style="margin-top: 1rem;">
+          <span class="tag tech">Embeddings</span>
+          <span class="tag tech">Chunking</span>
+          <span class="tag design">No-code</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, #c77dff, transparent);"></div>
+        <span class="icon">🌐</span>
+        <h3>Multi-canal Unificado</h3>
+        <p>Inbox único para Web, WhatsApp e Instagram. El agente humano ve el contexto completo de la conversación y puede tomar el control en cualquier momento.</p>
+        <div class="phase-tags" style="margin-top: 1rem;">
+          <span class="tag tech">WhatsApp API</span>
+          <span class="tag tech">Meta API</span>
+          <span class="tag biz">Omnicanal</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 7: STACK -->
+<section>
+  <div class="container">
+    <div class="section-label">// 07 — Stack tecnológico recomendado</div>
+    <h2>Tecnología elegida por<br>velocidad, escala y costo</h2>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <h4>Frontend</h4>
+        <div class="stack-item"><span>Next.js 14</span> — App + Dashboard</div>
+        <div class="stack-item"><span>TailwindCSS</span> — Diseño</div>
+        <div class="stack-item"><span>Zustand</span> — Estado global</div>
+        <div class="stack-item"><span>React Flow</span> — Editor de flujos</div>
+      </div>
+      <div class="stack-card">
+        <h4>Backend</h4>
+        <div class="stack-item"><span>Node.js + Fastify</span> — API principal</div>
+        <div class="stack-item"><span>Python + FastAPI</span> — Servicio IA</div>
+        <div class="stack-item"><span>BullMQ</span> — Cola de tareas</div>
+        <div class="stack-item"><span>WebSockets</span> — Chat en tiempo real</div>
+      </div>
+      <div class="stack-card">
+        <h4>IA & Datos</h4>
+        <div class="stack-item"><span>LangChain</span> — Orquestación RAG</div>
+        <div class="stack-item"><span>Gemini + text-embedding-004</span> — RAG primario ⭐</div>
+        <div class="stack-item"><span>Vertex AI Vector Search</span> — DB vectorial</div>
+        <div class="stack-item"><span>GPT-4o / Claude</span> — LLM fallback / voz</div>
+        <div class="stack-item"><span>Whisper</span> — Transcripción voz</div>
+      </div>
+      <div class="stack-card">
+        <h4>Infraestructura</h4>
+        <div class="stack-item"><span>GCP (preferido)</span> — Cloud principal</div>
+        <div class="stack-item"><span>PostgreSQL (RDS)</span> — DB principal</div>
+        <div class="stack-item"><span>Redis</span> — Cache y delays humanizados</div>
+        <div class="stack-item"><span>Cloud Storage</span> — Archivos y docs</div>
+      </div>
+      <div class="stack-card">
+        <h4>Integraciones</h4>
+        <div class="stack-item"><span>Twilio / 360dialog</span> — WhatsApp Business</div>
+        <div class="stack-item"><span>Telegram Bot API</span> — Canal rápido ⭐</div>
+        <div class="stack-item"><span>Meta Graph API</span> — Instagram DMs</div>
+        <div class="stack-item"><span>Google Sheets API v4</span> — Sync datos ⭐</div>
+        <div class="stack-item"><span>Stripe + MercadoPago</span> — Pagos</div>
+      </div>
+      <div class="stack-card">
+        <h4>DevOps & Seguridad</h4>
+        <div class="stack-item"><span>Docker + K8s</span> — Contenedores</div>
+        <div class="stack-item"><span>GitHub Actions</span> — CI/CD</div>
+        <div class="stack-item"><span>Sentry</span> — Error tracking</div>
+        <div class="stack-item"><span>Auth0 / Clerk</span> — Autenticación</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 7B: TELEGRAM FAST-TRACK -->
+<section>
+  <div class="container">
+    <div class="section-label">// 07B — Canal rápido</div>
+    <h2>Telegram: el canal de entrada<br>sin fricción para el cliente nuevo</h2>
+    <p>Mientras que WhatsApp e Instagram requieren verificación de Business Manager, aprobaciones de Meta y configuración técnica avanzada, Telegram permite lanzar un bot funcional en menos de 5 minutos. Esto lo convierte en el canal perfecto para el MVP inicial y para clientes que quieren resultados inmediatos.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, #229ED9, #54a9eb);"></div>
+        <span class="icon">⚡</span>
+        <h3>Setup de Telegram en 3 pasos</h3>
+        <p>1. El cliente habla con @BotFather en Telegram y obtiene su token.<br>2. Pega el token en nuestra plataforma.<br>3. Bot activo en 60 segundos — sin formularios, sin esperas, sin verificaciones.</p>
+        <div class="phase-tags" style="margin-top:1rem;">
+          <span class="tag tech">Telegram Bot API</span>
+          <span class="tag design">5 min setup</span>
+          <span class="tag biz">0 aprobaciones</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, #229ED9, transparent);"></div>
+        <span class="icon">🎯</span>
+        <h3>Estrategia de adopción progresiva</h3>
+        <p>El cliente empieza con Telegram (rápido y gratis) mientras tramita la verificación de WhatsApp Business. Cuando Meta aprueba, activa WhatsApp con un clic y mantiene ambos canales sincronizados al mismo CRM.</p>
+        <div class="phase-tags" style="margin-top:1rem;">
+          <span class="tag biz">Telegram → WhatsApp</span>
+          <span class="tag design">Mismo CRM</span>
+          <span class="tag tech">Unified inbox</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <h3>💡 Ventaja competitiva de Telegram</h3>
+      <p style="margin:0; color: var(--muted);">Ningún competidor directo en LATAM posiciona Telegram como canal de entrada para reducir la fricción del onboarding. Es un diferencial de experiencia: el cliente tiene su bot funcionando el mismo día que se registra, genera confianza y reduce churn en los primeros 7 días (el período más crítico de retención).</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 7C: META & WHATSAPP TUTORIAL -->
+<section>
+  <div class="container">
+    <div class="section-label">// 07C — Tutoriales de integración</div>
+    <h2>Conectar WhatsApp e Instagram<br>no debería ser difícil</h2>
+    <p>La integración con Meta es el punto de mayor abandono en plataformas similares. La solución: tutoriales en video paso a paso, integrados directamente en el dashboard, con detección automática de errores y soporte en vivo.</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, #25D366, #128C7E);"></div>
+        <span class="icon">📱</span>
+        <h3>Tutorial WhatsApp Business</h3>
+        <p>Video interactivo de 8 minutos con: creación de cuenta Business Manager, verificación del número, solicitud de acceso a la API, configuración de webhooks. Con checklist de progreso en tiempo real.</p>
+        <div class="phase-tags" style="margin-top:1rem;">
+          <span class="tag tech">360dialog</span>
+          <span class="tag biz">Video guiado</span>
+          <span class="tag design">Checklist live</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, #E1306C, #833AB4);"></div>
+        <span class="icon">📸</span>
+        <h3>Tutorial Instagram DMs</h3>
+        <p>Guía para vincular la cuenta de Instagram con el Facebook Business Manager, activar los mensajes de la API y configurar los webhooks de mensajería. Soporte para cuentas personales que se convierten a Professional.</p>
+        <div class="phase-tags" style="margin-top:1rem;">
+          <span class="tag tech">Meta Graph API</span>
+          <span class="tag biz">Instagram Pro</span>
+          <span class="tag design">Step-by-step</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent4), transparent);"></div>
+        <span class="icon">🆘</span>
+        <h3>Soporte de integración activa</h3>
+        <p>Chat de soporte en vivo durante el proceso de configuración de Meta (los errores son predecibles y se pueden resolver con respuestas estándar). Detección automática del estado de verificación con alertas proactivas.</p>
+        <div class="phase-tags" style="margin-top:1rem;">
+          <span class="tag biz">Live support</span>
+          <span class="tag tech">Error detection</span>
+          <span class="tag design">Proactive alerts</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 7D: GEMINI + RAG -->
+<section>
+  <div class="container">
+    <div class="section-label">// 07D — Motor de inteligencia</div>
+    <h2>Por qué Gemini lidera<br>nuestra base de conocimiento</h2>
+    <p>La elección del modelo para RAG no es trivial. Después de comparar en producción, Gemini demuestra ventajas concretas para el caso de uso de bases de conocimiento empresariales en español.</p>
+
+    <div class="grid-2" style="margin-top: 2rem;">
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, #4285F4, #34A853, #FBBC05, #EA4335);"></div>
+        <span class="icon">🧠</span>
+        <h3>Gemini para RAG — Ventajas clave</h3>
+        <p><strong style="color:var(--text)">Ventana de contexto masiva (1M tokens):</strong> puede procesar catálogos enteros, documentos legales y manuales sin necesidad de chunking agresivo que pierde contexto.</p>
+        <p><strong style="color:var(--text)">text-embedding-004:</strong> los embeddings de Google superan a OpenAI en benchmarks de recuperación semántica en español y portugués.</p>
+        <p><strong style="color:var(--text)">Multimodal nativo:</strong> entiende imágenes de productos, tablas en PDFs y screenshots sin preprocesamiento adicional.</p>
+        <p style="margin:0;"><strong style="color:var(--text)">Vertex AI integrado:</strong> vector search, tuning y despliegue en el mismo ecosistema GCP → menor latencia, menor costo.</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent2), transparent);"></div>
+        <span class="icon">🏗️</span>
+        <h3>Arquitectura RAG recomendada</h3>
+        <p><strong style="color:var(--text)">Ingesta:</strong> PDF → extracción → chunking semántico → Gemini text-embedding-004 → Vertex AI Vector Search (un índice por tenant).</p>
+        <p><strong style="color:var(--text)">Retrieval:</strong> query del usuario → embedding → top-K chunks relevantes → reranking con Gemini Flash → contexto al modelo.</p>
+        <p><strong style="color:var(--text)">Generación:</strong> Gemini 1.5 Pro para respuestas largas/complejas. Gemini 1.5 Flash para respuestas rápidas de chat → latencia &lt;800ms.</p>
+        <p style="margin:0;"><strong style="color:var(--text)">Fallback:</strong> Si el RAG no encuentra respuesta con confianza &gt;0.7, escala a humano o responde "no tengo esa info, te conecto con el equipo".</p>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <h3>📊 Google Sheets — Integración bidireccional</h3>
+      <p style="color: var(--muted); margin-bottom: 0.8rem;">Una de las integraciones más demandadas por PYMEs en LATAM que gestionan su inventario, precios y clientes en hojas de cálculo.</p>
+      <div class="grid-3" style="margin-top: 0;">
+        <div style="padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 6px; border: 1px solid var(--border);">
+          <strong style="color: var(--green); font-size: 0.85rem;">📥 Sheets → Bot</strong>
+          <p style="font-size: 0.8rem; margin-top: 0.4rem; margin-bottom: 0;">El bot lee precios, stock e info de productos directamente desde Google Sheets. El cliente actualiza su hoja y el bot lo refleja en minutos, sin re-entrenar.</p>
+        </div>
+        <div style="padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 6px; border: 1px solid var(--border);">
+          <strong style="color: var(--accent2); font-size: 0.85rem;">📤 Bot → Sheets</strong>
+          <p style="font-size: 0.8rem; margin-top: 0.4rem; margin-bottom: 0;">Cada lead capturado por el bot se escribe automáticamente en una hoja designada: nombre, contacto, interés, fecha. El cliente tiene su CRM en Sheets si lo prefiere.</p>
+        </div>
+        <div style="padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 6px; border: 1px solid var(--border);">
+          <strong style="color: var(--accent4); font-size: 0.85rem;">🔄 Sync en tiempo real</strong>
+          <p style="font-size: 0.8rem; margin-top: 0.4rem; margin-bottom: 0;">Webhook de Google Drive que notifica cambios → el sistema re-indexa solo las filas modificadas. Latencia de sync: &lt;2 minutos. Sin intervención del cliente.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 7E: HUMANIZACIÓN DEL BOT -->
+<section>
+  <div class="container">
+    <div class="section-label">// 07E — Motor de humanización</div>
+    <h2>Un bot tan humano que<br>genera la duda</h2>
+    <p>El estándar de calidad del producto no es "un buen chatbot". Es que las personas terminen la conversación sin saber con certeza si hablaron con un humano. Esto requiere un motor de humanización técnicamente sofisticado, no solo buenas instrucciones al LLM.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent), var(--accent2));"></div>
+        <span class="icon">⌨️</span>
+        <h3>Mensajes fraccionados + delays adaptativos</h3>
+        <p>Las respuestas largas se dividen en fragmentos con lógica de conversación humana. Entre cada fragmento hay un delay calculado según la longitud del texto: <strong style="color:var(--text)">velocidad de tipeo humana ~40 palabras/minuto</strong> más una variación aleatoria de ±20%.</p>
+        <p style="margin:0;">Antes del primer mensaje: "typing..." visible durante 800ms–2.5s según longitud. Nunca 0ms — eso delata al bot inmediatamente.</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--green), transparent);"></div>
+        <span class="icon">✍️</span>
+        <h3>Redacción humanizada por el LLM</h3>
+        <p>El system prompt de cada bot incluye reglas de escritura humana: uso de comas y puntos como pausas naturales, contracciones coloquiales del español del país del negocio, frases cortas seguidas de elaboración, preguntas de seguimiento genuinas.</p>
+        <p style="margin:0;">Prohibido: listas con bullets en chat, respuestas mayores a 3 oraciones en un solo bloque, inicio de mensajes con "¡Claro!", "¡Por supuesto!" repetitivo.</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent4), transparent);"></div>
+        <span class="icon">🎭</span>
+        <h3>Sistema de personalidades configurables</h3>
+        <p>El cliente define la personalidad de su bot en el onboarding con sliders intuitivos y ejemplos en tiempo real. La plataforma genera el system prompt automáticamente.</p>
+        <div style="margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.4rem;">
+          <div style="background: var(--surface2); border-radius: 4px; padding: 0.5rem 0.8rem; font-size: 0.8rem; color: var(--muted); border: 1px solid var(--border);">
+            🏥 <strong style="color:var(--text)">Clínica:</strong> cálido, empático, profesional, nunca alarmista
+          </div>
+          <div style="background: var(--surface2); border-radius: 4px; padding: 0.5rem 0.8rem; font-size: 0.8rem; color: var(--muted); border: 1px solid var(--border);">
+            👗 <strong style="color:var(--text)">Tienda moda:</strong> entusiasta, juvenil, usa emojis con moderación
+          </div>
+          <div style="background: var(--surface2); border-radius: 4px; padding: 0.5rem 0.8rem; font-size: 0.8rem; color: var(--muted); border: 1px solid var(--border);">
+            🏋️ <strong style="color:var(--text)">Gimnasio:</strong> motivador, directo, usa jerga fitness natural
+          </div>
+          <div style="background: var(--surface2); border-radius: 4px; padding: 0.5rem 0.8rem; font-size: 0.8rem; color: var(--muted); border: 1px solid var(--border);">
+            ⚖️ <strong style="color:var(--text)">Legal/Finanzas:</strong> formal, preciso, evita compromisos legales
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, var(--accent3), transparent);"></div>
+        <span class="icon">🔧</span>
+        <h3>Controles técnicos de humanización</h3>
+        <p>Parámetros configurables por el cliente desde el dashboard, con preview en tiempo real:</p>
+        <div style="margin-top: 0.8rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size: 0.78rem;">
+          <div style="background: var(--surface2); padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border); color: var(--muted);">⏱ Velocidad de tipeo</div>
+          <div style="background: var(--surface2); padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border); color: var(--muted);">📝 Longitud de mensajes</div>
+          <div style="background: var(--surface2); padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border); color: var(--muted);">😊 Uso de emojis</div>
+          <div style="background: var(--surface2); padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border); color: var(--muted);">❓ Frecuencia de preguntas</div>
+          <div style="background: var(--surface2); padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border); color: var(--muted);">🗣 Tono formal/informal</div>
+          <div style="background: var(--surface2); padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border); color: var(--muted);">🌎 Variante del español</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top: 2rem; border-color: rgba(6,214,160,0.4); background: linear-gradient(135deg, rgba(6,214,160,0.06), rgba(0,229,255,0.04));">
+      <h3 style="color: var(--green);">🏆 El estándar de calidad: el "Test Turing de WhatsApp"</h3>
+      <p style="margin:0; color: var(--muted);">Internamente, cada template de industria pasa por un test manual antes de publicarse: 10 conversaciones reales con evaluadores que no saben si hablan con un bot o un humano. El template solo se aprueba si al menos 7 de 10 evaluadores dudan o se equivocan. Este estándar es el diferencial de producto más poderoso y el que más impacta en la retención del cliente final.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 8: MODELO DE NEGOCIO -->
+<section>
+  <div class="container">
+    <div class="section-label">// 08 — Modelo de negocio</div>
+    <h2>Pricing diseñado para<br>máxima conversión y retención</h2>
+
+    <div class="tier-grid">
+      <div class="tier">
+        <div class="tier-name">Starter</div>
+        <div class="tier-price">$29 <span>/mes</span></div>
+        <p style="font-size:0.82rem; margin-top: 0.5rem;">Para emprendedores que inician</p>
+        <ul>
+          <li>1 bot — solo texto</li>
+          <li>1 canal (web widget)</li>
+          <li>500 conversaciones/mes</li>
+          <li>Base de conocimiento 10MB</li>
+          <li>Analytics básico</li>
+          <li>CRM con hasta 200 contactos</li>
+          <li>Soporte por email</li>
+        </ul>
+      </div>
+      <div class="tier featured">
+        <div class="tier-name">Growth</div>
+        <div class="tier-price">$89 <span>/mes</span></div>
+        <p style="font-size:0.82rem; margin-top: 0.5rem;">Para negocios en crecimiento</p>
+        <ul>
+          <li>3 bots — texto + voz</li>
+          <li>3 canales (web + WhatsApp + IG)</li>
+          <li>3,000 conversaciones/mes</li>
+          <li>Base de conocimiento 100MB</li>
+          <li>Analytics avanzado + exportar</li>
+          <li>CRM ilimitado + automatizaciones</li>
+          <li>Integraciones (Calendar, Zapier)</li>
+          <li>Soporte prioritario</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <div class="tier-name">Pro</div>
+        <div class="tier-price">$199 <span>/mes</span></div>
+        <p style="font-size:0.82rem; margin-top: 0.5rem;">Para clínicas, cadenas, franquicias</p>
+        <ul>
+          <li>Bots ilimitados — texto + voz + imagen</li>
+          <li>Canales ilimitados</li>
+          <li>15,000 conversaciones/mes</li>
+          <li>Base de conocimiento 1GB</li>
+          <li>White-label (marca propia)</li>
+          <li>Multi-sede / Multi-agente</li>
+          <li>API access completo</li>
+          <li>Customer success dedicado</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <div class="tier-name">Agencia / Reseller</div>
+        <div class="tier-price">$399 <span>/mes</span></div>
+        <p style="font-size:0.82rem; margin-top: 0.5rem;">Para agencias que revenden el servicio</p>
+        <ul>
+          <li>Gestionar hasta 20 clientes</li>
+          <li>Panel de agencia unificado</li>
+          <li>White-label completo</li>
+          <li>Facturación independiente por cliente</li>
+          <li>Comisión por referidos</li>
+          <li>Onboarding conjunto</li>
+          <li>SLA garantizado</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 2rem;">
+      <div class="highlight">
+        <h3>📦 Ingresos adicionales</h3>
+        <p style="margin:0; color: var(--muted); font-size: 0.88rem;">• Conversaciones extra: $0.02 c/u sobre el límite<br>• Setup premium + onboarding personalizado: $299 único<br>• Entrenamientos adicionales de la base de conocimiento<br>• Integración personalizada: cotización por proyecto</p>
+      </div>
+      <div class="highlight">
+        <h3>🎯 Proyección Year 1</h3>
+        <p style="margin:0; color: var(--muted); font-size: 0.88rem;">Con 200 clientes activos (mix de planes):<br>• ARR estimado: ~$120,000<br>• MRR promedio por cliente: ~$50<br>• Churn objetivo: &lt;5% mensual<br>• LTV promedio: ~$1,200</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 9: ROADMAP -->
+<section>
+  <div class="container">
+    <div class="section-label">// 09 — Roadmap</div>
+    <h2>De MVP a ecosistema<br>en 12 meses</h2>
+
+    <div class="phase-list">
+      <div class="phase">
+        <div class="phase-num">M1-2</div>
+        <div class="phase-content">
+          <h3>🛠 MVP — Core product</h3>
+          <p>Builder de chatbot guiado (5 pasos), RAG básico con subida de PDFs y URLs, widget web, CRM básico (contactos + conversaciones), un plan de pago activo, autenticación segura.</p>
+          <div class="phase-tags">
+            <span class="tag tech">Next.js</span>
+            <span class="tag tech">LangChain</span>
+            <span class="tag tech">pgvector</span>
+            <span class="tag biz">Stripe</span>
+            <span class="tag design">5 templates</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">M3-4</div>
+        <div class="phase-content">
+          <h3>🚀 Go-to-Market + primeros 50 clientes</h3>
+          <p>WhatsApp Business API integrado, soporte de voz (Whisper), templates para 5 industrias, onboarding mejorado basado en feedback, landing page optimizada, primeras campañas de adquisición.</p>
+          <div class="phase-tags">
+            <span class="tag tech">Twilio</span>
+            <span class="tag tech">Whisper API</span>
+            <span class="tag biz">50 clientes</span>
+            <span class="tag design">5 industrias</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">M5-7</div>
+        <div class="phase-content">
+          <h3>📊 CRM avanzado + automatizaciones</h3>
+          <p>Pipeline de ventas visual, automatizaciones basadas en reglas, integración con Google Calendar, Instagram DMs, soporte de imágenes (product queries), analytics completo con exportación.</p>
+          <div class="phase-tags">
+            <span class="tag tech">React Flow</span>
+            <span class="tag tech">Vision API</span>
+            <span class="tag biz">Pipeline</span>
+            <span class="tag biz">Automatizaciones</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">M8-10</div>
+        <div class="phase-content">
+          <h3>🌐 Expansión canales + programa de agencias</h3>
+          <p>Inbox unificado omnicanal, programa de resellers/agencias, white-label, Zapier integration, mobile notifications app, marketplace de templates de industria.</p>
+          <div class="phase-tags">
+            <span class="tag biz">White-label</span>
+            <span class="tag tech">Zapier</span>
+            <span class="tag biz">Agencias</span>
+            <span class="tag design">Marketplace</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">M11-12</div>
+        <div class="phase-content">
+          <h3>🤖 IA proactiva + expansión internacional</h3>
+          <p>Sugerencias proactivas del bot, análisis de sentimiento en tiempo real, alertas de leads calientes, modo multiagente, soporte en inglés y portugués (Brasil), preparación Serie A / inversión.</p>
+          <div class="phase-tags">
+            <span class="tag tech">Sentiment AI</span>
+            <span class="tag biz">Brasil</span>
+            <span class="tag biz">200+ clientes</span>
+            <span class="tag design">Serie A ready</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 10: GTM -->
+<section>
+  <div class="container">
+    <div class="section-label">// 10 — Estrategia Go-to-Market</div>
+    <h2>Cómo conseguir los primeros<br>100 clientes pagos</h2>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-accent" style="background: var(--accent);"></div>
+        <span class="icon">🎯</span>
+        <h3>Canal 1 — Contenido + SEO</h3>
+        <p>Blog en español sobre IA para negocios. Artículos tipo "Cómo crear un chatbot para tu clínica". YouTube con tutoriales. Posicionamiento en búsquedas de alta intención de compra en LATAM.</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: var(--accent2);"></div>
+        <span class="icon">🤝</span>
+        <h3>Canal 2 — Comunidades y referidos</h3>
+        <p>Grupos de Facebook/WhatsApp de emprendedores, cámaras de comercio, asociaciones de clínicas. Programa de referidos: $20/mes por cada cliente que traigas activo.</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: var(--green);"></div>
+        <span class="icon">🏢</span>
+        <h3>Canal 3 — Agencias digitales</h3>
+        <p>Convertir agencias de marketing como distribuidores. Ellas venden el servicio a sus clientes con margen. Programa con revenue share del 30% mensual recurrente.</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: var(--accent4);"></div>
+        <span class="icon">📱</span>
+        <h3>Canal 4 — Demo gratuita + trial</h3>
+        <p>14 días gratis sin tarjeta de crédito. Demo personalizada por industria (el bot del visitante ya tiene su industria pre-configurada al entrar al sitio). Conversión esperada: 25-35%.</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: var(--accent3);"></div>
+        <span class="icon">💼</span>
+        <h3>Canal 5 — LinkedIn + outreach B2B</h3>
+        <p>Secuencias de outreach a dueños de clínicas, gerentes de gimnasios, fundadores de e-commerce. Propuesta de valor muy específica por industria. Conversaciones 1:1 para los primeros 50 clientes.</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background: #c77dff;"></div>
+        <span class="icon">🎙️</span>
+        <h3>Canal 6 — Podcasts y eventos</h3>
+        <p>Aparecer en podcasts de emprendimiento latinoamericano. Hablar en eventos de startups, ferias de tecnología, conferencias de salud, retail, etc. Posicionarse como el referente de IA para PYMEs.</p>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top: 2rem;">
+      <h3>🚨 Estrategia de lanzamiento (primeros 90 días)</h3>
+      <p style="color: var(--muted); margin: 0; font-size: 0.9rem;">
+        <strong style="color:var(--text)">Semana 1-2:</strong> Recluta 10 beta testers de industrias clave (2 clínicas, 2 tiendas, 2 gimnasios, 2 restaurantes, 2 servicios). Gratis a cambio de feedback estructurado.<br><br>
+        <strong style="color:var(--text)">Semana 3-6:</strong> Itera el producto con feedback real. Documenta casos de éxito. Solicita testimoniales y capturas de resultados. Construye la landing page con evidencia real.<br><br>
+        <strong style="color:var(--text)">Semana 7-12:</strong> Lanzamiento público. Product Hunt, comunidades, LinkedIn. Meta: 30 clientes pagos en 90 días. Precio de lanzamiento con descuento del 40% para los primeros 50.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<div class="container">
+  <div class="cta-block">
+    <h2>El momento es <span style="background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-family: 'Instrument Serif', serif; font-style: italic;">ahora</span></h2>
+    <p>Las PYMEs en LATAM están adoptando IA a velocidad acelerada. Quien construya la plataforma nativa en español con mejor UX, ganará el mercado.</p>
+    <div class="btn-group">
+      <a class="btn btn-primary" href="#">Definir equipo técnico →</a>
+      <a class="btn btn-secondary" href="#">Validar con primeros clientes</a>
+    </div>
+    <p style="margin-top: 2rem; font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; color: var(--border);">// documento generado con claude.ai — confidencial</p>
+  </div>
+</div>
+
+</body>
+</html>

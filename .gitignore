@@ -1,0 +1,22 @@
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+.env*.local
+.env
+
+# MacOS
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Supabase Local
+supabase/.temp/
+
+# IDE / Editor
+.vscode/
+.idea/
