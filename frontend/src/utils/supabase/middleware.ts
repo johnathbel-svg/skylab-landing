@@ -1,14 +1,31 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { createServerClient } from '@supabase/ssr'
 
 export async function updateSession(request: NextRequest) {
-    // Configuro la respuesta que voy a emitir
     let supabaseResponse = NextResponse.next({
         request,
     })
 
-    // Creo el cliente de Supabase
-    const supabase = await createClient()
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll() {
+                    return request.cookies.getAll()
+                },
+                setAll(cookiesToSet) {
+                    cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+                    supabaseResponse = NextResponse.next({
+                        request,
+                    })
+                    cookiesToSet.forEach(({ name, value, options }) =>
+                        supabaseResponse.cookies.set({ name, value, ...options })
+                    )
+                },
+            },
+        }
+    )
 
     // IMPORTANT: Avoid writing any logic between createServerClient and supabase.auth.getUser()
     // Se obtiene el usuario para forzar refresco del token
