@@ -15,16 +15,15 @@ export default async function DashboardLayout({
     }
 
     return (
-        <div className="flex h-screen bg-background relative overflow-hidden">
-            {/* Subtle global gradient background to accompany the sidebar */}
-            <div className="absolute inset-0 bg-gradient-to-br from-black via-zinc-950 to-black pointer-events-none z-0" />
+        <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
 
-            <div className="z-10 h-full">
+            {/* Dark Premium Sidebar */}
+            <div className="z-20 h-full shadow-2xl">
                 <Sidebar userEmail={user.email || 'Admin'} />
             </div>
 
-            {/* Dynamic Content */}
-            <main className="flex-1 flex flex-col h-full overflow-hidden relative z-10 w-full rounded-tl-3xl bg-black/40 backdrop-blur-2xl border-l border-t border-white/10 shadow-2xl shadow-black/50 lg:rounded-tl-[40px] mt-2 ml-[-1px]">
+            {/* Main Light Content Area */}
+            <main className="flex-1 flex flex-col h-full overflow-hidden relative z-10 w-full bg-slate-50">
                 {children}
             </main>
         </div>

@@ -9,7 +9,8 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { MessageSquareText } from 'lucide-react'
+import { MessageSquareText, Search } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default async function ConversationsPage() {
     const supabase = await createClient()
@@ -41,92 +42,99 @@ export default async function ConversationsPage() {
     }
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full bg-[#f8f9fa]">
             {/* Premium Header */}
-            <header className="h-20 border-b border-white/5 flex items-center px-10 relative shrink-0">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent opacity-50 pointer-events-none" />
-
+            <header className="h-20 border-b border-slate-200 bg-white flex items-center px-10 relative shrink-0 shadow-sm z-10">
                 <div className="flex items-center justify-between w-full relative z-10">
                     <div className="flex items-center gap-4">
-                        <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 shadow-inner">
-                            <MessageSquareText className="w-5 h-5 text-emerald-400" />
+                        <div className="p-2.5 bg-emerald-50 rounded-lg">
+                            <MessageSquareText className="w-5 h-5 text-emerald-600" />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold tracking-tight text-white">Bandeja de Entrada</h1>
-                            <p className="text-sm text-white/50 tracking-wide mt-0.5">Control y derivación de todas las conversaciones atendidas por IA.</p>
+                            <h1 className="text-xl font-bold tracking-tight text-slate-900">Bandeja de Entrada</h1>
+                            <p className="text-sm text-slate-500 font-medium mt-0.5">Control y derivación de conversaciones atendidas por IA.</p>
                         </div>
                     </div>
 
-                    {roleData?.tenants && (
-                        <Badge variant="outline" className="px-3 py-1 bg-emerald-500/10 text-emerald-300 border-emerald-500/20 text-xs font-semibold uppercase tracking-widest shadow-lg shadow-emerald-500/10">
-                            {(roleData.tenants as any).name}
-                        </Badge>
-                    )}
+                    {/* Toolbar Right */}
+                    <div className="flex items-center gap-4">
+                        <div className="relative">
+                            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Buscar por cliente o teléfono..."
+                                className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium w-64 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-800 placeholder:font-normal placeholder:text-slate-400"
+                            />
+                        </div>
+                        <Button className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">
+                            Nueva Conversación
+                        </Button>
+                    </div>
                 </div>
             </header>
 
             {/* Table Content */}
-            <div className="flex-1 p-10 overflow-y-auto">
-                <div className="relative rounded-3xl overflow-hidden bg-[#0a0a0c] border border-white/5 shadow-2xl p-[1px]">
-                    <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
-                    <div className="h-full w-full bg-[#0a0a0c] rounded-[23px] overflow-hidden">
-                        <Table>
-                            <TableHeader className="bg-white/[0.02] border-b border-white/5">
-                                <TableRow className="border-none hover:bg-transparent">
-                                    <TableHead className="font-semibold text-white/70 h-14 uppercase text-xs tracking-wider">Estado</TableHead>
-                                    <TableHead className="font-semibold text-white/70 h-14 uppercase text-xs tracking-wider">Cliente (Contacto)</TableHead>
-                                    <TableHead className="font-semibold text-white/70 h-14 uppercase text-xs tracking-wider">Bot Asignado</TableHead>
-                                    <TableHead className="font-semibold text-white/70 h-14 uppercase text-xs tracking-wider">Canal</TableHead>
-                                    <TableHead className="font-semibold text-white/70 h-14 uppercase text-xs tracking-wider text-right">Inicio de Chat</TableHead>
+            <div className="flex-1 p-8 overflow-y-auto">
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <Table>
+                        <TableHeader className="bg-slate-50/80 border-b border-slate-200">
+                            <TableRow className="border-none hover:bg-transparent">
+                                <TableHead className="font-bold text-slate-500 h-12 uppercase text-[11px] tracking-widest pl-6">Estado</TableHead>
+                                <TableHead className="font-bold text-slate-500 h-12 uppercase text-[11px] tracking-widest">Cliente (Contacto)</TableHead>
+                                <TableHead className="font-bold text-slate-500 h-12 uppercase text-[11px] tracking-widest">Bot Asignado</TableHead>
+                                <TableHead className="font-bold text-slate-500 h-12 uppercase text-[11px] tracking-widest">Canal</TableHead>
+                                <TableHead className="font-bold text-slate-500 h-12 uppercase text-[11px] tracking-widest text-right pr-6">Inicio de Chat</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {conversations.length === 0 ? (
+                                <TableRow className="border-b border-slate-100/50 hover:bg-slate-50/50">
+                                    <TableCell colSpan={5} className="text-center h-48 text-slate-400 font-medium bg-white">
+                                        <div className="flex flex-col items-center justify-center gap-3">
+                                            <div className="p-4 bg-slate-50 rounded-full">
+                                                <MessageSquareText className="w-8 h-8 text-slate-300" />
+                                            </div>
+                                            <p className="text-sm">No tienes conversaciones activas en este momento.</p>
+                                        </div>
+                                    </TableCell>
                                 </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {conversations.length === 0 ? (
-                                    <TableRow className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                                        <TableCell colSpan={5} className="text-center h-48 text-white/40 font-medium">
-                                            <div className="flex flex-col items-center justify-center gap-3">
-                                                <MessageSquareText className="w-8 h-8 opacity-20" />
-                                                No tienes conversaciones activas en este momento.
+                            ) : (
+                                conversations.map((conv) => (
+                                    <TableRow key={conv.id} className="border-b border-slate-100 hover:bg-slate-50/80 transition-colors group cursor-pointer">
+                                        <TableCell className="py-4 pl-6">
+                                            <Badge variant={conv.status === 'open' ? 'default' : 'secondary'} className="capitalize bg-emerald-50 text-emerald-700 border-none font-bold shadow-none">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2 animate-pulse" />
+                                                {conv.status}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="py-4">
+                                            <div className="flex flex-col gap-0.5">
+                                                <span className="text-sm font-semibold text-slate-800">
+                                                    {conv.contacts?.name || 'Cliente sin registrar'}
+                                                </span>
+                                                <span className="text-xs text-slate-400 font-medium">
+                                                    {conv.contacts?.phone_number || conv.contacts?.email}
+                                                </span>
                                             </div>
                                         </TableCell>
+                                        <TableCell className="py-4">
+                                            <span className="text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-3 py-1 rounded-full border border-slate-200 shadow-sm">
+                                                {conv.bots?.name || 'Bot Genérico'}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="py-4">
+                                            <Badge variant="outline" className="capitalize border-slate-200 text-slate-500 bg-white font-semibold">
+                                                {conv.channel}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right text-slate-500 text-sm font-medium py-4 pr-6">
+                                            {new Date(conv.created_at).toLocaleString()}
+                                        </TableCell>
                                     </TableRow>
-                                ) : (
-                                    conversations.map((conv) => (
-                                        <TableRow key={conv.id} className="border-b border-white/5 hover:bg-white/[0.04] transition-colors group">
-                                            <TableCell className="py-4">
-                                                <Badge variant={conv.status === 'open' ? 'default' : 'secondary'} className="capitalize bg-emerald-500/10 text-emerald-400 border-emerald-500/20 font-medium">
-                                                    {conv.status}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="font-medium py-4">
-                                                <div className="flex flex-col gap-1">
-                                                    <span className="text-sm font-medium text-white/90 group-hover:text-white transition-colors">
-                                                        {conv.contacts?.name || 'Usuario Anónimo'}
-                                                    </span>
-                                                    <span className="text-xs text-white/40">
-                                                        {conv.contacts?.phone_number || conv.contacts?.email}
-                                                    </span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="py-4">
-                                                <span className="text-xs font-semibold uppercase tracking-wider bg-white/5 text-white/60 px-2.5 py-1 rounded-full border border-white/10">
-                                                    {conv.bots?.name || 'Bot Genérico'}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className="py-4">
-                                                <Badge variant="outline" className="capitalize border-white/10 text-white/50">
-                                                    {conv.channel}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-right text-white/40 text-sm font-medium py-4">
-                                                {new Date(conv.created_at).toLocaleString()}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
                 </div>
             </div>
         </div>
