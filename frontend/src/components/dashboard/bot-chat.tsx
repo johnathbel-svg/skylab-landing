@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { useChat, Message } from 'ai/react'
+import { useChat, Message } from '@ai-sdk/react'
 import { Bot, Send, User, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -123,7 +123,7 @@ export function BotChat({ bots }: BotChatProps) {
                     />
                     <Button
                         type="submit"
-                        disabled={isLoading || !input.trim()}
+                        disabled={isLoading || !input?.trim()}
                         className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-5 shadow-sm"
                     >
                         <Send className="w-4 h-4" />
