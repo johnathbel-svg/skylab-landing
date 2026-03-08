@@ -17,7 +17,7 @@ export async function POST(req: Request) {
         }
 
         const result = await streamText({
-            model: google('gemini-1.5-flash-latest') as any,
+            model: google('models/gemini-1.5-flash') as any,
             system: systemPrompt || "Eres un asistente virtual útil y profesional.",
             messages,
             temperature: 0.7,
