@@ -1,0 +1,60 @@
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\api\ingest\route.ts
+ - 5: WARN - @typescript-eslint/no-unused-vars - 'cheerio' is defined but never used.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\bot-builder\page.tsx
+ - 6: WARN - @typescript-eslint/no-unused-vars - 'Sparkles' is defined but never used.
+ - 7: WARN - @typescript-eslint/no-unused-vars - 'Palette' is defined but never used.
+ - 8: WARN - @typescript-eslint/no-unused-vars - 'MessageSquare' is defined but never used.
+ - 244: ERROR - react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+ - 244: ERROR - react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\bot-tester\page.tsx
+ - 4: WARN - @typescript-eslint/no-unused-vars - 'Bot' is defined but never used.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\integrations\page.tsx
+ - 6: WARN - @typescript-eslint/no-unused-vars - 'MessageSquare' is defined but never used.
+ - 225: ERROR - react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+ - 225: ERROR - react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+ - 246: ERROR - react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+ - 246: ERROR - react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\knowledge\page.tsx
+ - 5: WARN - @typescript-eslint/no-unused-vars - 'Plus' is defined but never used.
+ - 5: WARN - @typescript-eslint/no-unused-vars - 'Bot' is defined but never used.
+ - 5: WARN - @typescript-eslint/no-unused-vars - 'LinkIcon' is defined but never used.
+ - 32: ERROR - react-hooks/set-state-in-effect - Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\knowledge\page.tsx:32:9
+  30 |
+  31 |     useEffect(() => {
+> 32 |         fetchStats()
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  33 |     }, [fetchStats])
+  34 |
+  35 |     return (
+ - 499: WARN - @next/next/no-img-element - Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\onboarding\page.tsx
+ - 6: WARN - @typescript-eslint/no-unused-vars - 'Building2' is defined but never used.
+ - 9: WARN - @typescript-eslint/no-unused-vars - 'ChevronRight' is defined but never used.
+ - 15: WARN - @typescript-eslint/no-unused-vars - 'Globe' is defined but never used.
+ - 16: WARN - @typescript-eslint/no-unused-vars - 'ArrowLeft' is defined but never used.
+ - 22: WARN - @typescript-eslint/no-unused-vars - 'Link' is defined but never used.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\page.tsx
+ - 4: WARN - @typescript-eslint/no-unused-vars - 'PieChart' is defined but never used.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\components\dashboard\bot-chat.tsx
+ - 6: WARN - @typescript-eslint/no-unused-vars - 'MessageSquare' is defined but never used.
+ - 16: WARN - @typescript-eslint/no-unused-vars - 'playB2BSound' is assigned a value but never used.
+ - 16: WARN - @typescript-eslint/no-unused-vars - 'type' is defined but never used.
+ - 362: WARN - @next/next/no-img-element - Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\components\layout\Sidebar.tsx
+ - 5: WARN - @typescript-eslint/no-unused-vars - 'Bot' is defined but never used.
+ - 7: WARN - @typescript-eslint/no-unused-vars - 'AnimatePresence' is defined but never used.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\components\ui\seed-data-button.tsx
+ - 27: WARN - @typescript-eslint/no-unused-vars - 'error' is defined but never used.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\scripts\bot-dev-runner.ts
+ - 19: WARN - @typescript-eslint/no-unused-vars - 'GOOGLE_AI_KEY' is assigned a value but never used.
+ - 70: WARN - @typescript-eslint/no-unused-vars - 'e' is defined but never used.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\utils\supabase\middleware.ts
+ - 18: WARN - @typescript-eslint/no-unused-vars - 'options' is defined but never used.

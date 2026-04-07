@@ -1,0 +1,111 @@
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\actions\integrations.ts
+ - 96: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\actions\knowledge.ts
+ - 53: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 121: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 159: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\actions\seed-actions.ts
+ - 90: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\api\chat\route.ts
+ - 50: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\api\ingest\route.ts
+ - 4: @typescript-eslint/no-unused-vars - 'cheerio' is defined but never used.
+ - 73: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 185: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\api\webhooks\telegram\route.ts
+ - 77: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\api\webhooks\whatsapp\route.ts
+ - 62: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 82: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\auth\actions.ts
+ - 1: null - Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any').
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\bot-builder\page.tsx
+ - 6: @typescript-eslint/no-unused-vars - 'Sparkles' is defined but never used.
+ - 7: @typescript-eslint/no-unused-vars - 'Palette' is defined but never used.
+ - 8: @typescript-eslint/no-unused-vars - 'MessageSquare' is defined but never used.
+ - 244: react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+ - 244: react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\bot-tester\page.tsx
+ - 3: @typescript-eslint/no-unused-vars - 'Bot' is defined but never used.
+ - 22: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\conversations\page.tsx
+ - 32: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\crm\page.tsx
+ - 32: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\integrations\page.tsx
+ - 5: @typescript-eslint/no-unused-vars - 'MessageSquare' is defined but never used.
+ - 15: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 224: react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+ - 224: react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+ - 245: react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+ - 245: react/no-unescaped-entities - `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\knowledge\page.tsx
+ - 4: @typescript-eslint/no-unused-vars - 'Plus' is defined but never used.
+ - 4: @typescript-eslint/no-unused-vars - 'Bot' is defined but never used.
+ - 4: @typescript-eslint/no-unused-vars - 'LinkIcon' is defined but never used.
+ - 31: react-hooks/set-state-in-effect - Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\knowledge\page.tsx:31:9
+  29 |
+  30 |     useEffect(() => {
+> 31 |         fetchStats()
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  32 |     }, [fetchStats])
+  33 |
+  34 |     return (
+ - 188: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 280: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 358: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 359: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 410: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 496: null - Unused eslint-disable directive (no problems were reported from '@next/next/no-img-element').
+ - 498: @next/next/no-img-element - Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\onboarding\page.tsx
+ - 6: @typescript-eslint/no-unused-vars - 'Building2' is defined but never used.
+ - 9: @typescript-eslint/no-unused-vars - 'ChevronRight' is defined but never used.
+ - 15: @typescript-eslint/no-unused-vars - 'Globe' is defined but never used.
+ - 16: @typescript-eslint/no-unused-vars - 'ArrowLeft' is defined but never used.
+ - 22: @typescript-eslint/no-unused-vars - 'Link' is defined but never used.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\app\dashboard\page.tsx
+ - 3: @typescript-eslint/no-unused-vars - 'PieChart' is defined but never used.
+ - 22: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\components\dashboard\bot-chat.tsx
+ - 5: @typescript-eslint/no-unused-vars - 'MessageSquare' is defined but never used.
+ - 15: @typescript-eslint/no-unused-vars - 'playB2BSound' is assigned a value but never used.
+ - 15: @typescript-eslint/no-unused-vars - 'type' is defined but never used.
+ - 146: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 186: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 361: @next/next/no-img-element - Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\components\dashboard\overview-charts.tsx
+ - 17: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 18: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\components\layout\Sidebar.tsx
+ - 5: @typescript-eslint/no-unused-vars - 'Bot' is defined but never used.
+ - 7: @typescript-eslint/no-unused-vars - 'AnimatePresence' is defined but never used.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\components\ui\seed-data-button.tsx
+ - 27: @typescript-eslint/no-unused-vars - 'error' is defined but never used.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\lib\bot-engine.ts
+ - 136: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 174: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 250: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 301: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\scripts\bot-dev-runner.ts
+ - 18: @typescript-eslint/no-unused-vars - 'GOOGLE_AI_KEY' is assigned a value but never used.
+ - 28: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 48: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 49: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 69: @typescript-eslint/no-unused-vars - 'e' is defined but never used.
+ - 69: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 84: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 211: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+ - 218: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\scripts\migrate-saas.ts
+ - 37: @typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+C:\Users\gamble\.gemini\antigravity\playground\fractal-corona\BotFlow\frontend\src\utils\supabase\middleware.ts
+ - 18: @typescript-eslint/no-unused-vars - 'options' is defined but never used.

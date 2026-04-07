@@ -1,4 +1,5 @@
 import { Montserrat, Open_Sans } from "next/font/google";
+import type { Metadata } from "next";
 import "./globals.css";
 
 const openSans = Open_Sans({
@@ -11,9 +12,9 @@ const montserrat = Montserrat({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: "BotFlow - Chatbots Inteligentes & CRM",
-  description: "Plataforma SaaS de Chatbots humanizados con Gemini RAG e integración CRM Multicanal",
+export const metadata: Metadata = {
+  title: "Skylab Human Bot | Inteligencia Artificial Biomimética",
+  description: "La plataforma de bots más humana del mercado. Automatización con sello Skylab.",
 };
 
 export default function RootLayout({

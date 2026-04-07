@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -20,6 +20,22 @@ export async function login(formData: FormData) {
     }
 
     revalidatePath("/", "layout");
+
+    // Check if the user is a super admin
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (user) {
+        const { data: superAdmin } = await supabase
+            .from('super_admins')
+            .select('user_id')
+            .eq('user_id', user.id)
+            .single()
+
+        if (superAdmin) {
+            redirect("/super-admin");
+        }
+    }
+
     redirect("/dashboard");
 }
 

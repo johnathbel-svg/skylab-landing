@@ -2,10 +2,12 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Bot, LayoutDashboard, MessageSquareText, Users, LogOut, ChevronRight, FlaskConical } from "lucide-react"
+import { Bot, LayoutDashboard, MessageSquareText, Users, LogOut, ChevronRight, FlaskConical, Database, Network, Sparkles, Palette } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import { SkylabLogo, SkylabBrandText } from "./SkylabLogo"
+import { signout } from "@/app/auth/actions"
 
 interface SidebarProps {
     userEmail: string
@@ -20,6 +22,18 @@ export function Sidebar({ userEmail }: SidebarProps) {
             icon: LayoutDashboard,
             href: "/dashboard",
             color: "text-blue-500",
+        },
+        {
+            label: "Bot Builder 🤖",
+            icon: Sparkles,
+            href: "/dashboard/bot-builder",
+            color: "text-blue-400",
+        },
+        {
+            label: "Configuración Inicial",
+            icon: Palette,
+            href: "/dashboard/onboarding",
+            color: "text-amber-400",
         },
         {
             label: "Conversaciones",
@@ -39,18 +53,26 @@ export function Sidebar({ userEmail }: SidebarProps) {
             href: "/dashboard/crm",
             color: "text-blue-500",
         },
+        {
+            label: "Base de Conocimiento",
+            icon: Database,
+            href: "/dashboard/knowledge",
+            color: "text-slate-500",
+        },
+        {
+            label: "Integraciones",
+            icon: Network,
+            href: "/dashboard/integrations",
+            color: "text-emerald-500",
+        },
     ]
 
     return (
         <aside className="relative flex flex-col w-64 h-full bg-[#1e1e2d] border-r border-slate-800/40 font-sans shadow-xl">
             {/* Brand Header */}
-            <div className="flex items-center h-20 px-6 mt-2 relative z-10 border-b border-white/[0.04]">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600 shadow-md shadow-blue-600/20 mr-3">
-                    <Bot className="w-5 h-5 text-white" />
-                </div>
-                <span className="font-display font-extrabold text-xl tracking-tight text-white mb-0.5">
-                    BotFlow
-                </span>
+            <div className="flex items-center h-24 px-6 mt-2 relative z-10 border-b border-white/[0.04]">
+                <SkylabLogo size={48} className="mr-3" />
+                <SkylabBrandText className="font-black text-3xl tracking-tighter mb-0.5" />
             </div>
 
             {/* Navigation Menu */}
@@ -108,7 +130,7 @@ export function Sidebar({ userEmail }: SidebarProps) {
                         </div>
                     </div>
 
-                    <form action="/auth/signout" method="POST" className="w-full">
+                    <form action={signout} className="w-full">
                         <Button
                             type="submit"
                             variant="ghost"

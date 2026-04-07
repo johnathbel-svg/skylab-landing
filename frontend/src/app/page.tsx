@@ -1,8 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { SkylabLogo, SkylabBrandText } from "@/components/layout/SkylabLogo";
+import Link from "next/link";
 
-export default function Home() {
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8 relative overflow-hidden">
       {/* Background decorations */}
@@ -15,15 +17,18 @@ export default function Home() {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="z-10 text-center max-w-3xl"
       >
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
-          El Chatbot que pasa el <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">
-            Test de Turing
+        <div className="flex justify-center mb-10">
+          <SkylabLogo size={160} />
+        </div>
+        <h1 className="flex flex-col items-center justify-center text-center mb-6">
+          <SkylabBrandText className="font-black text-[5rem] md:text-[8rem] mb-2 leading-none" />
+          <span className="text-2xl md:text-3xl text-[#0EA5E9]/80 font-bold tracking-[0.3em] uppercase mt-2">
+            Human Bot
           </span>
         </h1>
 
-        <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto">
-          Plataforma SaaS con Gemini RAG, humanización inteligente y un CRM Multicanal nativo (WhatsApp, Telegram, Web).
+        <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto font-medium">
+          La evolución de la comunicación IA. Humanización profunda, motor RAG nativo y un flujo de trabajo omnicanal bajo el sello Skylab.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -35,13 +40,15 @@ export default function Home() {
             Comenzar Prueba Gratis
           </motion.button>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-4 bg-secondary text-secondary-foreground font-medium rounded-full shadow-sm hover:bg-secondary/80 transition-colors"
-          >
-            Ver Dashboard
-          </motion.button>
+          <Link href="/dashboard">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-secondary text-secondary-foreground font-bold rounded-full shadow-sm hover:bg-secondary/80 transition-colors uppercase tracking-widest text-xs"
+            >
+              Ver Dashboard
+            </motion.button>
+          </Link>
         </div>
       </motion.div>
 
@@ -58,7 +65,7 @@ export default function Home() {
             <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
             <div className="w-3 h-3 rounded-full bg-green-500/80" />
           </div>
-          <div className="text-xs text-muted-foreground font-mono">BotFlow CRM Preview</div>
+          <div className="text-xs text-muted-foreground font-black tracking-widest uppercase">Skylab Human Interface Preview</div>
         </div>
         <div className="h-64 flex items-center justify-center text-muted-foreground">
           [ CRM Unified Inbox Interface ]
