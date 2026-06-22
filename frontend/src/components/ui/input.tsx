@@ -3,9 +3,13 @@ import { Input as InputPrimitive } from "@base-ui/react/input"
 
 import { cn } from "@/lib/utils"
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+function Input({ className, type, id, ...props }: React.ComponentProps<"input">) {
+  const generatedId = React.useId()
+  const inputId = id || generatedId
+
   return (
     <InputPrimitive
+      id={inputId}
       type={type}
       data-slot="input"
       className={cn(

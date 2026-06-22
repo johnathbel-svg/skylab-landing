@@ -20,3 +20,20 @@ supabase/.temp/
 # IDE / Editor
 .vscode/
 .idea/
+
+# Documentos y especificaciones confidenciales de Synerg-IA
+Finanzas_SynergIA_2026.xlsx
+.~lock.Finanzas_SynergIA_2026.xlsx#
+Skylab_FAQ_Base_Conocimiento.docx
+Skylab_Fichas_Industria.docx
+Skylab_Informativo.pdf
+Skylab_Planes_Precios.xlsx
+FINANZAS_AUTOMATION.md
+SKYLAB_BRAND_GUIDELINES.md
+SYNERG-IA.md
+finanzas_automation.js
+start-skylab.ps1
+.spec/
+Conf-20260418T205158Z-3-001/
+Diseño Synerg-IA/
+*.log

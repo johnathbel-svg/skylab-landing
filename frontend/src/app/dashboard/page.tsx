@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
@@ -7,7 +7,6 @@ import {
     Users,
     ShieldCheck,
     Plus,
-    Settings,
     Sparkles,
     ArrowUpRight,
     ArrowDownRight,
@@ -15,7 +14,6 @@ import {
     Search,
     ChevronRight,
     Command,
-    ExternalLink,
     Zap
 } from 'lucide-react'
 import { OverviewCharts } from '@/components/dashboard/overview-charts'
@@ -30,13 +28,8 @@ export default async function DashboardPage() {
         redirect('/login')
     }
 
-    const { data: roleData } = await supabase
-        .from('user_roles')
-        .select('tenant_id')
-        .eq('user_id', user.id)
-        .maybeSingle()
-
-    const tenantId = roleData?.tenant_id
+    const { getActiveTenantId } = await import('@/utils/supabase/server')
+    const tenantId = await getActiveTenantId()
 
     let conversations: any[] = []
     let recentConversations: any[] = []
@@ -101,39 +94,42 @@ export default async function DashboardPage() {
     ]
 
     return (
-        <div className="flex flex-col h-full bg-[#f8fafc] dark:bg-[#020617] relative">
-            <div className="absolute top-0 right-0 w-[800px] h-[600px] bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="flex-1 overflow-y-auto bg-background p-8 md:p-12 relative">
+            {/* Background elements - Orbital atmosphere */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#00B4DB]/5 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-10 left-10 w-[300px] h-[300px] bg-sky-500/5 blur-[100px] rounded-full pointer-events-none" />
 
-            <header className="h-20 border-b border-slate-200 dark:border-white/5 bg-white/70 dark:bg-[#020617]/70 backdrop-blur-2xl flex items-center justify-between px-8 sticky top-0 z-50">
-                <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 bg-slate-900 dark:bg-white rounded-2xl shadow-xl flex items-center justify-center text-white dark:text-slate-900">
-                            <Command className="w-5 h-5" />
+            <div className="max-w-7xl mx-auto space-y-12 relative z-10">
+                {/* Header Section - Modern Skylab Style */}
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 border-b border-white/10 pb-10">
+                    <div className="space-y-4">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#00B4DB]/10 border border-[#00B4DB]/20 rounded-full text-[#00B4DB] text-[10px] font-black uppercase tracking-widest">
+                            <Command className="w-3 h-3 animate-pulse" /> Command Center
                         </div>
-                        <div>
-                            <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tighter">Command Center</h1>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Protocolo v3.2</p>
+                        <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter font-display">
+                            Dashboard
+                        </h1>
+                        <p className="text-[#A6B3C4] font-medium max-w-xl leading-relaxed">
+                            Monitorea interacciones en tiempo real, analiza el crecimiento de leads y gestiona tus bots de un vistazo.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-4 w-full lg:w-auto">
+                        <div className="relative group hidden lg:block">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#7E8A9C]" />
+                            <Input
+                                placeholder="Buscar..."
+                                className="w-64 pl-10 h-11 border-white/10 rounded-xl bg-[#0B0F17] focus-visible:ring-[#00B4DB]/20 focus-visible:border-[#00B4DB]/70 transition-all text-sm font-medium"
+                            />
                         </div>
+                        <Link href="/dashboard/knowledge">
+                            <Button className="bg-[#00B4DB] hover:bg-[#26C7EA] text-[#061018] rounded-xl px-5 font-bold text-[13px] h-11 shadow-sm transition-all focus:ring-4 focus:ring-[#00B4DB]/20">
+                                <Plus className="w-4 h-4 mr-2" /> Nueva Fuente
+                            </Button>
+                        </Link>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="relative group hidden lg:block">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-                        <Input
-                            placeholder="Buscar..."
-                            className="w-48 pl-10 h-10 border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-white/5 focus-visible:bg-white transition-all text-xs"
-                        />
-                    </div>
-                    <Link href="/dashboard/knowledge">
-                        <Button size="sm" className="bg-indigo-600 text-white rounded-xl px-4 font-bold text-[10px] uppercase h-10 gap-2">
-                            <Plus className="w-3 h-3" /> Nueva Fuente
-                        </Button>
-                    </Link>
-                </div>
-            </header>
-
-            <main className="flex-1 overflow-y-auto w-full max-w-[1600px] mx-auto p-6 lg:p-10 space-y-6">
+            <div className="space-y-6 relative z-10">
                 {/* Master KPIs - Harmonized Bento Design */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <ExecutiveKpi
@@ -170,82 +166,85 @@ export default async function DashboardPage() {
                     />
                 </div>
 
-                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
                     <div className="xl:col-span-8 space-y-6">
-                        <div className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-[32px] p-1.5 shadow-xl shadow-slate-200/50 dark:shadow-none group overflow-hidden border-b-4 border-b-indigo-500/10">
-                            <OverviewCharts volumeData={volumeData} channelData={channelData} />
-                        </div>
-
-                        <div className="bg-slate-900 rounded-[32px] p-8 text-white relative overflow-hidden group shadow-2xl border border-white/5">
-                            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none" />
-                            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Hostinger Horizons Style Hero Card */}
+                        <div className="bg-[#0a0a0a] rounded-[24px] p-8 lg:p-10 text-white relative overflow-hidden shadow-2xl">
+                            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#00B4DB]/20 blur-[120px] rounded-full pointer-events-none" />
+                            <div className="relative z-10 max-w-2xl mb-8">
+                                <h2 className="text-3xl lg:text-4xl font-extrabold tracking-tight mb-3">Impulsa tu negocio con agentes autónomos.</h2>
+                                <p className="text-[#7E8A9C] text-lg font-medium">Observa métricas, optimiza canales y escala la atención al cliente de forma automática.</p>
+                            </div>
+                            
+                            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-5">
                                 {insights.map((insight, idx) => (
-                                    <div key={idx} className="bg-white/5 rounded-[28px] p-7 border border-white/5 transition-all hover:bg-white/10 hover:translate-y-[-4px]">
-                                        <div className={`w-12 h-12 rounded-2xl mb-5 flex items-center justify-center border-2 border-white/10 ${insight.type === 'positive' ? 'bg-emerald-500/20' : insight.type === 'warning' ? 'bg-amber-500/20' : 'bg-indigo-500/20'}`}>
-                                            {insight.type === 'positive' ? <ArrowUpRight className="text-emerald-400 w-5 h-5" /> : <Zap className="text-indigo-400 w-5 h-5" />}
+                                    <div key={idx} className="bg-white/[0.05] rounded-2xl p-6 border border-white/[0.08] hover:bg-white/10 transition-colors">
+                                        <div className={`w-10 h-10 rounded-xl mb-4 flex items-center justify-center ${insight.type === 'positive' ? 'bg-emerald-500/20 text-emerald-400' : insight.type === 'warning' ? 'bg-amber-500/20 text-amber-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                                            {insight.type === 'positive' ? <ArrowUpRight className="w-5 h-5" /> : <Zap className="w-5 h-5" />}
                                         </div>
-                                        <h4 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.25em] mb-3">{insight.title}</h4>
-                                        <p className="text-[14px] text-slate-200 font-bold leading-relaxed tracking-tight">"{insight.desc}"</p>
+                                        <h4 className="text-[11px] font-bold text-[#7E8A9C] uppercase tracking-widest mb-2">{insight.title}</h4>
+                                        <p className="text-[14px] text-white font-semibold leading-relaxed">&ldquo;{insight.desc}&rdquo;</p>
                                     </div>
                                 ))}
                             </div>
                         </div>
+
+                        <div className="bg-[#0B0F17] border border-white/10 rounded-[24px] p-6">
+                            <OverviewCharts volumeData={volumeData} channelData={channelData} />
+                        </div>
                     </div>
 
                     <div className="xl:col-span-4 flex flex-col gap-6">
-                        <div className="bg-white dark:bg-white/5 rounded-[32px] border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-200/60 dark:shadow-none overflow-hidden flex flex-col flex-1 min-h-[500px]">
-                            <div className="p-7 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/50 dark:bg-transparent">
+                        <div className="bg-[#0B0F17] rounded-[24px] border border-white/10 flex flex-col flex-1 min-h-[500px]">
+                            <div className="p-6 border-b border-white/10 flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] flex items-center gap-2">
-                                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse ring-2 ring-emerald-500/20" /> Actividad Reciente
+                                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Actividad Reciente
                                     </h3>
-                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Real-Time Sync</p>
                                 </div>
                                 <Link href="/dashboard/conversations">
-                                    <Button variant="ghost" size="sm" className="h-8 px-4 rounded-xl text-[9px] font-black uppercase bg-slate-100 dark:bg-white/10 hover:bg-indigo-600 hover:text-white transition-all">Ver Todo</Button>
+                                    <Button variant="ghost" size="sm" className="h-9 px-4 rounded-lg text-[13px] font-semibold text-[#00B4DB] hover:bg-[#0B0F17] transition-colors">Ver Todo</Button>
                                 </Link>
                             </div>
-                            <div className="flex-1 overflow-y-auto p-6 space-y-3 custom-scrollbar">
+                            <div className="flex-1 overflow-y-auto p-5 space-y-2 custom-scrollbar">
                                 {recentConversations.length === 0 ? (
-                                    <div className="h-full flex flex-col items-center justify-center opacity-20 gap-4">
-                                        <MessageSquareText className="w-12 h-12" />
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em]">Node Idle</p>
+                                    <div className="h-full flex flex-col items-center justify-center opacity-40 gap-4">
+                                        <MessageSquareText className="w-10 h-10 text-[#7E8A9C]" />
+                                        <p className="text-xs font-bold text-[#A6B3C4] uppercase tracking-widest">Sin Actividad</p>
                                     </div>
                                 ) : (
                                     recentConversations.map((conv) => (
-                                        <div key={conv.id} className="p-4 hover:bg-slate-50 dark:hover:bg-white/10 border border-transparent hover:border-slate-100 dark:hover:border-white/10 rounded-[24px] transition-all flex items-center gap-4 group/item cursor-pointer">
-                                            <div className="w-11 h-11 rounded-1.5xl bg-slate-900 dark:bg-white border border-white/10 flex items-center justify-center text-xs font-black text-white dark:text-slate-900 shadow-lg group-hover/item:scale-105 transition-transform">
-                                                {conv.contacts?.avatar_url ? <img src={conv.contacts.avatar_url} alt="" className="w-full h-full object-cover" /> : conv.contacts?.name?.charAt(0) || 'U'}
+                                        <div key={conv.id} className="p-4 hover:bg-[#0B0F17] border border-transparent hover:border-white/10 rounded-2xl transition-all flex items-center gap-4 group cursor-pointer">
+                                            <div className="w-10 h-10 rounded-full bg-[#0B0F17] border border-white/10 flex items-center justify-center text-sm font-bold text-white">
+                                                {conv.contacts?.avatar_url ? <img src={conv.contacts.avatar_url} alt="" className="w-full h-full object-cover rounded-full" /> : conv.contacts?.name?.charAt(0) || 'U'}
                                             </div>
                                             <div className="flex-1 truncate">
-                                                <p className="text-[14px] font-black truncate text-slate-900 dark:text-white group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400 transition-colors">{conv.contacts?.name || 'Usuario Autónomo'}</p>
-                                                <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-0.5">{conv.channel || 'Direct Cloud'}</p>
+                                                <p className="text-[14px] font-bold text-white group-hover:text-[#00B4DB] transition-colors">{conv.contacts?.name || 'Vistante Autónomo'}</p>
+                                                <p className="text-[11px] text-[#A6B3C4] font-medium mt-0.5">{conv.channel === 'web' ? 'Chat Web' : conv.channel}</p>
                                             </div>
-                                            <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-all">
-                                                <ChevronRight className="w-4 h-4 text-indigo-500" />
-                                            </div>
+                                            <ChevronRight className="w-4 h-4 text-[#7E8A9C] group-hover:text-[#00B4DB] transition-colors" />
                                         </div>
                                     ))
                                 )}
                             </div>
                         </div>
 
-                        <div className="bg-indigo-600 rounded-[32px] p-9 text-white shadow-2xl relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 blur-[50px] rounded-full pointer-events-none group-hover:bg-white/20 transition-colors" />
-                            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] mb-7 flex items-center gap-3">
-                                <Sparkles className="w-5 h-5 text-indigo-200" /> Puentes de Acceso
+                        <div className="bg-[#0B0F17] border border-white/10 rounded-[24px] p-6 relative overflow-hidden group">
+                           <h3 className="text-[12px] font-bold uppercase tracking-widest text-[#7E8A9C] mb-6 flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-[#00B4DB]" /> Accesos Rápidos
                             </h3>
-                            <div className="grid grid-cols-1 gap-4 relative z-10">
-                                <OperationLink href="/dashboard/bot-builder" label="Constructor Gen-3" icon={<Command className="w-4 h-4" />} />
-                                <OperationLink href="/dashboard/integrations" label="Puente Omnicanal" icon={<Activity className="w-4 h-4" />} />
-                                <OperationLink href="/dashboard/crm" label="Centro de Leads" icon={<Users className="w-4 h-4" />} />
+                            <div className="grid grid-cols-1 gap-3 relative z-10">
+                                <OperationLink href="/dashboard/bot-builder" label="Configurar Agente" icon={<Command className="w-4 h-4" />} />
+                                <OperationLink href="/dashboard/integrations" label="Conectar Canales" icon={<Activity className="w-4 h-4" />} />
+                                <OperationLink href="/dashboard/crm" label="Gestionar Leads" icon={<Users className="w-4 h-4" />} />
                             </div>
                         </div>
                     </div>
                 </div>
-            </main>
+            </div>
+            </div>
         </div>
-    )
+    );
 }
 
 function ExecutiveKpi({ label, value, icon, trend, isUp, color }: any) {
@@ -257,21 +256,20 @@ function ExecutiveKpi({ label, value, icon, trend, isUp, color }: any) {
     }
 
     return (
-        <div className="bg-white dark:bg-white/5 rounded-[28px] p-5 border border-slate-200 dark:border-white/10 shadow-lg shadow-slate-200/40 dark:shadow-none transition-all hover:translate-y-[-3px] group relative overflow-hidden">
-            <div className="flex items-center justify-between mb-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border-2 shadow-inner ${tones[color]}`}>
+        <div className="bg-[#0B0F17] rounded-2xl p-6 border border-white/10 transition-all hover:border-white/20 cursor-pointer">
+            <div className="flex items-center justify-between mb-4">
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${tones[color]}`}>
                     {icon}
                 </div>
-                <div className={`px-2 py-0.5 rounded-full text-[9px] font-black tracking-widest flex items-center gap-1 ${isUp ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'}`}>
-                    {isUp ? <ArrowUpRight className="w-2 h-2" /> : <ArrowDownRight className="w-2 h-2" />}
+                <div className={`px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${isUp ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                    {isUp ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                     {trend}
                 </div>
             </div>
             <div>
-                <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-1">{label}</p>
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">{value}</h3>
+                <p className="text-[12px] font-bold text-[#A6B3C4] uppercase tracking-wide mb-1">{label}</p>
+                <h3 className="text-3xl font-extrabold text-white tracking-tight">{value}</h3>
             </div>
-            <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-indigo-500/5 blur-2xl rounded-full group-hover:bg-indigo-500/10 transition-colors pointer-events-none" />
         </div>
     )
 }
@@ -279,16 +277,14 @@ function ExecutiveKpi({ label, value, icon, trend, isUp, color }: any) {
 function OperationLink({ href, label, icon }: { href: string, label: string, icon: React.ReactNode }) {
     return (
         <Link href={href}>
-            <div className="flex items-center justify-between p-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-[24px] transition-all group active:scale-95">
-                <div className="flex items-center gap-3.5">
-                    <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white">
+            <div className="flex items-center justify-between p-3.5 bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 hover:border-[#00B4DB]/30 rounded-[16px] transition-colors group">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#0B0F17] border border-white/10 flex items-center justify-center text-white group-hover:text-[#00B4DB] group-hover:border-[#00B4DB]/30 transition-colors">
                         {icon}
                     </div>
-                    <span className="text-sm font-black text-white tracking-tight">{label}</span>
+                    <span className="text-[14px] font-bold text-[#A6B3C4] group-hover:text-white tracking-tight">{label}</span>
                 </div>
-                <div className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                    <ChevronRight className="w-3.5 h-3.5 text-white/50 group-hover:text-white transition-all group-hover:translate-x-1" />
-                </div>
+                <ChevronRight className="w-4 h-4 text-[#7E8A9C] group-hover:text-[#00B4DB] transition-transform group-hover:translate-x-1" />
             </div>
         </Link>
     )

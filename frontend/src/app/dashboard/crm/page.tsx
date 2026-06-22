@@ -10,7 +10,7 @@ import {
 } from './actions';
 import { createClient } from '@/utils/supabase/client';
 import { Loader2, MessageSquare, Phone, Mail, User, ShieldAlert, X, Send } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 // Tipos
 type LeadStage = 'new' | 'qualified' | 'proposal' | 'won' | 'lost';
@@ -28,7 +28,7 @@ interface CrmContact {
 }
 
 const STAGES: { id: LeadStage; label: string; color: string }[] = [
-    { id: 'new', label: 'Nuevos', color: 'bg-blue-500/20 text-blue-400 border-blue-500/50' },
+    { id: 'new', label: 'Nuevos', color: 'bg-[#00B4DB]/20 text-blue-400 border-[#00B4DB]/50' },
     { id: 'qualified', label: 'Calificados', color: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/50' },
     { id: 'proposal', label: 'Negociación', color: 'bg-orange-500/20 text-orange-400 border-orange-500/50' },
     { id: 'won', label: 'Ganados', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' },
@@ -42,7 +42,6 @@ export default function CrmPage() {
     const [history, setHistory] = useState<any[]>([]);
     const [loadingHistory, setLoadingHistory] = useState(false);
     const [draggedContactId, setDraggedContactId] = useState<string | null>(null);
-    const { toast } = useToast();
 
     const fetchContacts = async () => {
         try {
@@ -50,11 +49,32 @@ export default function CrmPage() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
 
-            // Fetch tenant id
-            const { data: role } = await supabase.from('user_roles').select('tenant_id').eq('user_id', user.id).single();
-            if (!role?.tenant_id) return;
+            // Helper para leer cookies en cliente
+            const getCookie = (name: string) => {
+                if (typeof document === 'undefined') return null;
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+                return null;
+            };
 
-            const res = await getCrmContactsAction(role.tenant_id);
+            // Fetch tenant id (soporte para impersonación)
+            let tenantId: string | null = null;
+            const impersonated = getCookie('impersonate_tenant_id');
+            if (impersonated) {
+                const { data: superAdmin } = await supabase.from('super_admins').select('user_id').eq('user_id', user.id).maybeSingle();
+                if (superAdmin) {
+                    tenantId = impersonated;
+                }
+            }
+
+            if (!tenantId) {
+                const { data: role } = await supabase.from('user_roles').select('tenant_id').eq('user_id', user.id).maybeSingle();
+                tenantId = role?.tenant_id || null;
+            }
+            if (!tenantId) return;
+
+            const res = await getCrmContactsAction(tenantId);
             // Cast to LeadStage intentionally
             setContacts(res as any);
         } catch (e) {
@@ -72,7 +92,6 @@ export default function CrmPage() {
     const handleDragStart = (e: React.DragEvent, id: string) => {
         setDraggedContactId(id);
         e.dataTransfer.effectAllowed = 'move';
-        // Hack visual para ocultar fantasma original (opcional)
     };
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -92,10 +111,10 @@ export default function CrmPage() {
             const req = await updateLeadStageAction(draggedContactId, stageId);
             if (!req.success) {
                 // Rollback si falla
-                toast({ title: "Error", description: "No se pudo actualizar el estado.", variant: "destructive" });
+                toast.error("Error", { description: "No se pudo actualizar el estado." });
                 fetchContacts();
             } else {
-                toast({ title: "Lead Actualizado", description: `Movido a ${STAGES.find(s => s.id === stageId)?.label}` });
+                toast.success("Lead Actualizado", { description: `Movido a ${STAGES.find(s => s.id === stageId)?.label}` });
             }
         }
         setDraggedContactId(null);
@@ -119,13 +138,12 @@ export default function CrmPage() {
         
         const req = await toggleHandoffAction(selectedContact.conversationId, selectedContact.humanInControl);
         if (req.success) {
-            const newFlag = req.newStatus;
+            const newFlag = req.newStatus ?? false;
             setSelectedContact({ ...selectedContact, humanInControl: newFlag });
             // Update in main list
             setContacts(prev => prev.map(c => c.id === selectedContact.id ? { ...c, humanInControl: newFlag } : c));
             
-            toast({
-                title: newFlag ? "Control Manual Activado" : "Control IA Activado",
+            toast.info(newFlag ? "Control Manual Activado" : "Control IA Activado", {
                 description: newFlag 
                     ? "El bot ya no responderá a este lead. Puedes hablar ahora." 
                     : "El bot ahora responderá automáticamente de nuevo.",
@@ -136,25 +154,25 @@ export default function CrmPage() {
     if (loading) {
         return (
             <div className="flex w-full items-center justify-center p-20 h-screen">
-                <Loader2 className="h-8 w-8 animate-spin text-[#9FA8FF]" />
+                <Loader2 className="h-8 w-8 animate-spin text-[#00B4DB]" />
             </div>
         );
     }
 
     return (
-        <div className="flex h-[calc(100vh-6rem)] w-full overflow-hidden bg-[#0A0B14]">
+        <div className="flex h-[calc(100vh-6rem)] w-full overflow-hidden bg-background">
             {/* Tablero Kanban */}
             <div className="flex flex-1 overflow-x-auto p-6 space-x-6 hide-scrollbar relative z-10">
                 {STAGES.map((stage) => (
                     <div 
                         key={stage.id} 
-                        className="flex-shrink-0 w-80 flex flex-col h-full bg-[#111322]/50 border border-white/5 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-md"
+                        className="flex-shrink-0 w-80 flex flex-col h-full bg-[#0B0F17]/[0.02] border border-white/5 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-md"
                         onDragOver={handleDragOver}
                         onDrop={(e) => handleDrop(e, stage.id)}
                     >
                         <div className="p-4 border-b border-white/5 flex items-center justify-between">
                             <span className="font-semibold text-white/90 text-sm tracking-wide">{stage.label}</span>
-                            <span className={\`text-xs px-2 py-0.5 rounded-full border \${stage.color}\`}>
+                            <span className={`text-xs px-2 py-0.5 rounded-full border ${stage.color}`}>
                                 {contacts.filter(c => c.leadStage === stage.id).length}
                             </span>
                         </div>
@@ -171,7 +189,7 @@ export default function CrmPage() {
                                         draggable
                                         onDragStart={(e) => handleDragStart(e as any, contact.id)}
                                         onClick={() => openContactPanel(contact)}
-                                        className={\`p-4 rounded-xl cursor-grab active:cursor-grabbing border hover:border-[#9FA8FF]/50 transition-all duration-200 \${draggedContactId === contact.id ? 'opacity-50 scale-95 border-dashed border-[#9FA8FF]' : 'bg-[#1A1C2E] border-white/10 shadow-lg'}\`}
+                                        className={`p-4 rounded-xl cursor-grab active:cursor-grabbing border hover:border-[#00B4DB]/50 transition-all duration-200 ${draggedContactId === contact.id ? 'opacity-50 scale-95 border-dashed border-[#9FA8FF]' : 'bg-[#0B0F17] border-white/10 shadow-lg'}`}
                                     >
                                         <div className="flex items-start justify-between mb-2">
                                             <div className="font-medium text-white/90 truncate mr-2 flex items-center">
@@ -185,7 +203,7 @@ export default function CrmPage() {
                                         <div className="text-xs text-white/50 mb-3 flex flex-col gap-1">
                                             <span className="flex items-center"><Phone className="w-3 h-3 justify-center mr-1" />{contact.contactInfo}</span>
                                         </div>
-                                        <div className="text-[11px] text-[#9FA8FF]/70 truncate bg-[#9FA8FF]/10 p-2 rounded-lg border border-[#9FA8FF]/10 line-clamp-2 white-space-normal">
+                                        <div className="text-[11px] text-[#00B4DB]/70 truncate bg-[#00B4DB]/10 p-2 rounded-lg border border-white/10 line-clamp-2 white-space-normal">
                                             <MessageSquare className="w-3 h-3 inline mr-1 opacity-50" />
                                             {contact.lastMessage}
                                         </div>
@@ -205,7 +223,7 @@ export default function CrmPage() {
                         animate={{ x: 0, opacity: 1 }}
                         exit={{ x: '100%', opacity: 0 }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="w-96 h-full bg-[#111322] border-l border-white/10 shadow-2xl flex flex-col absolute right-0 z-50"
+                        className="w-96 h-full bg-[#0B0F17] border-l border-white/10 shadow-2xl flex flex-col absolute right-0 z-50"
                     >
                         {/* Header Panel */}
                         <div className="p-5 border-b border-white/10 flex justify-between items-start bg-gradient-to-b from-white/5 to-transparent">
@@ -228,7 +246,7 @@ export default function CrmPage() {
                         <div className="p-4 border-b border-white/5">
                             <button 
                                 onClick={handleHandoffToggle}
-                                className={\`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border text-sm font-medium transition-colors \${selectedContact.humanInControl ? 'bg-orange-500/20 text-orange-400 border-orange-500/50 hover:bg-orange-500/30' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'}\`}
+                                className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border text-sm font-medium transition-colors ${selectedContact.humanInControl ? 'bg-orange-500/20 text-orange-400 border-orange-500/50 hover:bg-orange-500/30' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'}`}
                             >
                                 <ShieldAlert className="w-4 h-4" />
                                 {selectedContact.humanInControl ? "Control Maestro Activo" : "Tomar Control Manual"}
@@ -239,15 +257,15 @@ export default function CrmPage() {
                         </div>
 
                         {/* Chat History */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4 pretty-scrollbar bg-[#0A0B14]/50">
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4 pretty-scrollbar bg-background/50">
                             {loadingHistory ? (
-                                <div className="flex justify-center p-10"><Loader2 className="w-6 h-6 animate-spin text-[#9FA8FF]" /></div>
+                                <div className="flex justify-center p-10"><Loader2 className="w-6 h-6 animate-spin text-[#00B4DB]" /></div>
                             ) : history.length === 0 ? (
                                 <div className="text-center text-white/30 text-sm mt-10">No hay mensajes.</div>
                             ) : (
                                 history.map((msg, i) => (
-                                    <div key={i} className={\`flex \${msg.role === 'user' ? 'justify-end' : 'justify-start'}\`}>
-                                        <div className={\`max-w-[85%] rounded-2xl p-3 text-sm shadow-md \${msg.role === 'user' ? 'bg-[#9FA8FF] text-[#0A0B14] rounded-br-[4px]' : 'bg-[#1A1C2E] border border-white/10 text-white/90 rounded-bl-[4px]'}\`}>
+                                    <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                        <div className={`max-w-[85%] rounded-2xl p-3 text-sm shadow-md ${msg.role === 'user' ? 'bg-[#00B4DB] text-[#0A0B14] rounded-br-[4px]' : 'bg-[#0B0F17] border border-white/10 text-white/90 rounded-bl-[4px]'}`}>
                                             {msg.content}
                                         </div>
                                     </div>
@@ -257,14 +275,14 @@ export default function CrmPage() {
 
                         {/* Input (Dummy for now) */}
                         {selectedContact.humanInControl && (
-                            <div className="p-4 border-t border-white/10 bg-[#111322]">
+                            <div className="p-4 border-t border-white/10 bg-[#0B0F17]">
                                 <div className="flex relative">
                                     <input 
                                         type="text" 
                                         placeholder="Escribe un mensaje directo..." 
-                                        className="w-full bg-[#1A1C2E] border border-white/10 text-white rounded-xl py-3 pl-4 pr-12 focus:outline-none focus:border-[#9FA8FF]/50" 
+                                        className="w-full bg-[#0B0F17] border border-white/10 text-white rounded-xl py-3 pl-4 pr-12 focus:outline-none focus:border-[#00B4DB]/50" 
                                     />
-                                    <button className="absolute right-2 top-2 p-1.5 bg-[#9FA8FF] text-[#0A0B14] rounded-lg">
+                                    <button className="absolute right-2 top-2 p-1.5 bg-[#00B4DB] text-[#0A0B14] rounded-lg">
                                         <Send className="w-4 h-4" />
                                     </button>
                                 </div>

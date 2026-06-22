@@ -1,6 +1,7 @@
 'use server';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 import { revalidatePath } from 'next/cache';
 
 export async function saveOnboardingAction(formData: any) {
@@ -14,30 +15,64 @@ export async function saveOnboardingAction(formData: any) {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error('No sesión activa');
 
-            const { data: roleData, error: roleError } = await supabase
+            // Use admin client (bypassing RLS) for writing to tenants and user_roles tables
+            const adminSupabase = createAdminClient();
+
+            const { data: roleData, error: roleError } = await adminSupabase
                 .from('user_roles')
                 .select('tenant_id')
                 .eq('user_id', user.id)
                 .maybeSingle();
 
             if (roleError) throw roleError;
-            if (!roleData) throw new Error('Usuario no vinculado a ningún Tenant');
+            
+            let tenantId;
+            if (!roleData) {
+                // Create new Tenant dynamically if user doesn't have one
+                const { data: newTenant, error: insertTenantError } = await adminSupabase
+                    .from('tenants')
+                    .insert({
+                        name: formData.businessName || 'Mi Empresa',
+                        industry: formData.industry,
+                        estimated_monthly_sales: parseInt(formData.monthlySales) || 0,
+                        estimated_interactions: parseInt(formData.interactions) || 0,
+                        subscription_plan: formData.suggestedPlan || 'starter',
+                        subscription_status: 'active'
+                    })
+                    .select('id')
+                    .single();
 
-            const tenantId = roleData.tenant_id;
+                if (insertTenantError) throw insertTenantError;
+                if (!newTenant) throw new Error('No se pudo crear el Tenant');
+                tenantId = newTenant.id;
 
-            // 1. Update Tenant
-            const { error: tenantError } = await supabase
-                .from('tenants')
-                .update({
-                    name: formData.businessName,
-                    industry: formData.industry,
-                    estimated_monthly_sales: parseInt(formData.monthlySales) || 0,
-                    estimated_interactions: parseInt(formData.interactions) || 0,
-                    subscription_plan: formData.suggestedPlan || 'starter'
-                })
-                .eq('id', tenantId);
+                // Link user to new Tenant as owner
+                const { error: insertRoleError } = await adminSupabase
+                    .from('user_roles')
+                    .insert({
+                        user_id: user.id,
+                        tenant_id: tenantId,
+                        role: 'owner'
+                    });
 
-            if (tenantError) throw tenantError;
+                if (insertRoleError) throw insertRoleError;
+            } else {
+                tenantId = roleData.tenant_id;
+                
+                // Update existing Tenant
+                const { error: tenantError } = await adminSupabase
+                    .from('tenants')
+                    .update({
+                        name: formData.businessName,
+                        industry: formData.industry,
+                        estimated_monthly_sales: parseInt(formData.monthlySales) || 0,
+                        estimated_interactions: parseInt(formData.interactions) || 0,
+                        subscription_plan: formData.suggestedPlan || 'starter'
+                    })
+                    .eq('id', tenantId);
+
+                if (tenantError) throw tenantError;
+            }
 
             // 2. Generate dynamic system prompt if templateId is provided
             let systemPrompt = `Eres un asistente servicial para ${formData.businessName}.`;
@@ -50,9 +85,17 @@ export async function saveOnboardingAction(formData: any) {
                     .single();
                     
                 if (template) {
-                    systemPrompt = `${template.base_system_prompt}\n\nContexto del cliente:\n- Empresa: ${formData.businessName}\n`;
+                    systemPrompt = `${template.base_system_prompt}
+
+### INFORMACIÓN Y CONTEXTO DEL NEGOCIO:
+- **Nombre de la Empresa**: ${formData.businessName}
+`;
                     if (formData.answers && Object.keys(formData.answers).length > 0) {
-                        systemPrompt += `- Configuraciones extra: ${JSON.stringify(formData.answers, null, 2)}`;
+                        systemPrompt += `\n### DIRECTRICES Y CONFIGURACIONES ESPECÍFICAS DEL NEGOCIO:\n`;
+                        for (const [key, val] of Object.entries(formData.answers)) {
+                            const label = key.replace(/_/g, ' ').toUpperCase();
+                            systemPrompt += `- **${label}**: ${val}\n`;
+                        }
                     }
                 }
             }

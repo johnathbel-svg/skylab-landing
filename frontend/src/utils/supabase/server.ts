@@ -27,3 +27,34 @@ export async function createClient() {
         }
     )
 }
+
+export async function getActiveTenantId() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return null
+
+    const cookieStore = await cookies()
+    const impersonated = cookieStore.get('impersonate_tenant_id')?.value
+
+    if (impersonated) {
+        // Verificar que el usuario real es super admin antes de aceptar la impersonación
+        const { data: superAdmin } = await supabase
+            .from('super_admins')
+            .select('*')
+            .eq('user_id', user.id)
+            .maybeSingle()
+
+        if (superAdmin) {
+            return impersonated
+        }
+    }
+
+    // Si no es super admin o no está impersonando, retornar su tenant normal
+    const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('tenant_id')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+    return roleData?.tenant_id || null
+}

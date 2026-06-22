@@ -1,17 +1,22 @@
-import { createClient } from '@/utils/supabase/server'
+﻿import { createClient } from '@/utils/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { AlertTriangle, Power, Globe, ZapOff, Activity, ShieldCheck, MessageSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { toggleSystemConfig } from '../actions'
 
 export const dynamic = 'force-dynamic'
 
 export default async function MetricsAndControlsPage() {
+    const supabase = await createClient()
 
-    // In a real prod scenario, we'll keep global system state in a Redis cache or a specific 'system_config' table.
-    // For this build, we mock the current state toggle visuals.
-    const isWhatsappGatewayActive = true
-    const isWebWidgetActive = true
-    const isInferenceEngineActive = true
+    // Query global system state from 'system_config' table
+    const { data: configs } = await supabase
+        .from('system_config')
+        .select('key, value')
+
+    const configMap = new Map(configs?.map(c => [c.key, c.value]) ?? [])
+    const isWhatsappGatewayActive = configMap.get('whatsapp_gateway_enabled') !== false
+    const isWebWidgetActive = configMap.get('web_widget_enabled') !== false
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
@@ -49,9 +54,14 @@ export default async function MetricsAndControlsPage() {
                                         <p className="text-xs text-slate-500 mt-0.5">Pause all incoming traffic from embedded website iframes.</p>
                                     </div>
                                 </div>
-                                <Button variant="outline" className={`shrink-0 border-rose-500/50 hover:bg-rose-500 hover:text-white transition-all ${isWebWidgetActive ? 'text-rose-400' : 'bg-rose-500 text-white'}`}>
-                                    <Power className="w-4 h-4 mr-2" /> {isWebWidgetActive ? 'Disable Gateway' : 'Enable Gateway'}
-                                </Button>
+                                <form action={async () => {
+                                    "use server"
+                                    await toggleSystemConfig('web_widget_enabled', !isWebWidgetActive)
+                                }}>
+                                    <Button type="submit" variant="outline" className={`shrink-0 border-rose-500/50 hover:bg-rose-500 hover:text-white transition-all ${isWebWidgetActive ? 'text-rose-400' : 'bg-rose-500 text-white'}`}>
+                                        <Power className="w-4 h-4 mr-2" /> {isWebWidgetActive ? 'Disable Gateway' : 'Enable Gateway'}
+                                    </Button>
+                                </form>
                             </div>
 
                             {/* Switch 2 */}
@@ -65,9 +75,14 @@ export default async function MetricsAndControlsPage() {
                                         <p className="text-xs text-slate-500 mt-0.5">Disconnect Meta Webhooks. Outbound messages will fail.</p>
                                     </div>
                                 </div>
-                                <Button variant="outline" className={`shrink-0 border-rose-500/50 hover:bg-rose-500 hover:text-white transition-all ${isWhatsappGatewayActive ? 'text-rose-400' : 'bg-rose-500 text-white'}`}>
-                                    <ZapOff className="w-4 h-4 mr-2" /> {isWhatsappGatewayActive ? 'Sever Connection' : 'Restore Connection'}
-                                </Button>
+                                <form action={async () => {
+                                    "use server"
+                                    await toggleSystemConfig('whatsapp_gateway_enabled', !isWhatsappGatewayActive)
+                                }}>
+                                    <Button type="submit" variant="outline" className={`shrink-0 border-rose-500/50 hover:bg-rose-500 hover:text-white transition-all ${isWhatsappGatewayActive ? 'text-rose-400' : 'bg-rose-500 text-white'}`}>
+                                        <ZapOff className="w-4 h-4 mr-2" /> {isWhatsappGatewayActive ? 'Sever Connection' : 'Restore Connection'}
+                                    </Button>
+                                </form>
                             </div>
 
                         </CardContent>

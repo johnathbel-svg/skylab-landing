@@ -119,20 +119,15 @@ export default function BotChatWidget({ initialBot }: { initialBot: any }) {
 
     const processFragments = async (fragments: any[]) => {
         setIsTypingHuman(true);
-        
         for (let i = 0; i < fragments.length; i++) {
             const fragment = fragments[i];
-            
-            // 1. Simular delay inicial (reacción)
+            setIsTypingHuman(true);
+            scrollToBottom();
             await new Promise(r => setTimeout(r, fragment.delayMs));
-            
-            // 2. Simular tiempo de escritura (typing bubble visible)
             setIsTypingHuman(true);
             scrollToBottom();
             await new Promise(r => setTimeout(r, fragment.typingMs));
             
-            // 3. Agregar el mensaje a la lista
-            setIsTypingHuman(false);
             setMessages((prev: Message[]) => [
                 ...prev,
                 {
@@ -141,6 +136,9 @@ export default function BotChatWidget({ initialBot }: { initialBot: any }) {
                     content: fragment.text
                 } as Message
             ]);
+            if (i === fragments.length - 1) {
+                setIsTypingHuman(false);
+            }
             scrollToBottom();
         }
     }

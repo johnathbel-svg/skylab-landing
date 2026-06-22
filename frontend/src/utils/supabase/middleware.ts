@@ -78,13 +78,8 @@ export async function updateSession(request: NextRequest) {
         // Si el usuario es Super Admin, no debe ser redirigido a onboarding ni al dashboard normal forzosamente
         // si se encuentra en su propia zona /super-admin.
         if (isSuperAdmin) {
-            // Si el admin está tratando de entrar a onboarding o dashboard, lo mandamos a super-admin
-            if (isOnboardingRoute || request.nextUrl.pathname === '/dashboard') {
-                const url = request.nextUrl.clone()
-                url.pathname = '/super-admin'
-                return NextResponse.redirect(url)
-            }
-            // Si ya está en rutas de super-admin, dejamos que el flujo continue natural
+            // Permitimos que el Super Admin entre a dashboard o onboarding si así lo desea explícitamente.
+            // Solo redirigimos si NO está en ninguna de esas rutas y tampoco en las de admin.
             return supabaseResponse
         }
 

@@ -46,6 +46,7 @@ export default function OnboardingDashboardPage() {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
     const [isSaving, setIsSaving] = useState(false);
+    const [acceptPrivacy, setAcceptPrivacy] = useState(false);
     
     const [templates, setTemplates] = useState<any[]>([]);
     const [isLoadingTemplates, setIsLoadingTemplates] = useState(true);
@@ -89,12 +90,12 @@ export default function OnboardingDashboardPage() {
     const handleFinalize = async () => {
         setIsSaving(true);
         // Combine formData with answers for the generation endpoint later
-        const result = await saveOnboardingAction({
+        const result = (await saveOnboardingAction({
             ...formData,
             suggestedPlan: plan.id,
             templateId: selectedTemplate?.id,
             answers
-        });
+        })) as any;
         
         setIsSaving(false);
         if (result.success) {
@@ -146,7 +147,7 @@ export default function OnboardingDashboardPage() {
                 </header>
 
                 <nav className="flex justify-between items-center relative px-10 max-w-4xl mx-auto" aria-label="Progreso de configuración">
-                    <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/5 -translate-y-1/2 z-0" />
+                    <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/[0.05] -translate-y-1/2 z-0" />
                     <motion.div
                         className="absolute top-1/2 left-0 h-[2px] bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 -translate-y-1/2 z-0 shadow-[0_0_20px_rgba(99,102,241,0.4)]"
                         initial={{ width: "0%" }}
@@ -215,7 +216,7 @@ export default function OnboardingDashboardPage() {
                                                     placeholder="Ej: Inversiones Paisa"
                                                     value={formData.businessName}
                                                     onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                                                    className="bg-white/5 border-white/10 h-16 px-8 rounded-3xl focus:ring-2 focus:ring-indigo-500/50 text-xl font-bold placeholder:text-slate-700 transition-all group-hover:bg-white/[0.08] text-center"
+                                                    className="bg-white/[0.05] border-white/10 h-16 px-8 rounded-3xl focus:ring-2 focus:ring-indigo-500/50 text-xl font-bold placeholder:text-slate-700 transition-all group-hover:bg-white/[0.08] text-center"
                                                 />
                                             </div>
                                         </div>
@@ -237,7 +238,7 @@ export default function OnboardingDashboardPage() {
                                                             className={`p-6 rounded-[28px] border text-left transition-all ${
                                                                 formData.industry === tpl.vertical_name 
                                                                 ? 'bg-indigo-600/20 border-indigo-500 shadow-[0_0_30px_rgba(99,102,241,0.2)]' 
-                                                                : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                                                                : 'bg-white/[0.05] border-white/10 hover:bg-white/10 hover:border-white/20'
                                                             }`}
                                                         >
                                                             <div className="flex items-center gap-4 mb-4">
@@ -273,7 +274,7 @@ export default function OnboardingDashboardPage() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
                                         <motion.div
                                             whileHover={{ y: -5 }}
-                                            className="bg-white/5 border border-white/10 p-10 rounded-[40px] space-y-6 hover:bg-white/[0.08] transition-all relative overflow-hidden group"
+                                            className="bg-white/[0.05] border border-white/10 p-10 rounded-[40px] space-y-6 hover:bg-white/[0.08] transition-all relative overflow-hidden group"
                                         >
                                             <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 blur-3xl group-hover:bg-blue-500/20 transition-all" />
                                             <Label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Ventas Mensuales (COP)</Label>
@@ -290,7 +291,7 @@ export default function OnboardingDashboardPage() {
                                         </motion.div>
                                         <motion.div
                                             whileHover={{ y: -5 }}
-                                            className="bg-white/5 border border-white/10 p-10 rounded-[40px] space-y-6 hover:bg-white/[0.08] transition-all relative overflow-hidden group"
+                                            className="bg-white/[0.05] border border-white/10 p-10 rounded-[40px] space-y-6 hover:bg-white/[0.08] transition-all relative overflow-hidden group"
                                         >
                                             <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 blur-3xl group-hover:bg-emerald-500/20 transition-all" />
                                             <Label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Interacciones Proyectadas</Label>
@@ -324,7 +325,17 @@ export default function OnboardingDashboardPage() {
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mt-12">
                                         {/* Configuration Side */}
                                         <div className="space-y-8">
-                                            <div className="bg-white/5 p-10 rounded-[40px] border border-white/5 space-y-8">
+                                            <div className="bg-indigo-950/20 border border-indigo-500/20 rounded-[32px] p-6 flex gap-4 items-start relative overflow-hidden group">
+                                                <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-500/10 blur-xl rounded-full" />
+                                                <ShieldCheck className="w-6 h-6 text-indigo-400 shrink-0 mt-1" />
+                                                <div className="space-y-1 relative z-10">
+                                                    <h4 className="text-xs font-bold text-white tracking-wide">ADN y Seguridad de Inferencia</h4>
+                                                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                                                        Los nombres, tonos y respuestas que configures se procesan exclusivamente para este bot bajo RLS (Row Level Security). Nunca se usarán para entrenar modelos públicos.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="bg-white/[0.05] p-10 rounded-[40px] border border-white/5 space-y-8">
                                                 <div className="space-y-4">
                                                     <Label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] ml-2">Nombre del Representante</Label>
                                                     <div className="relative group">
@@ -372,13 +383,13 @@ export default function OnboardingDashboardPage() {
                                                                 <div className="flex gap-4">
                                                                     <button
                                                                         onClick={() => setAnswers(prev => ({ ...prev, [q.id]: true }))}
-                                                                        className={`flex-1 py-3 rounded-xl border font-bold text-sm transition-all ${answers[q.id] === true ? 'bg-indigo-600 border-indigo-400 text-white' : 'bg-slate-900 border-white/10 text-slate-400 hover:bg-white/5'}`}
+                                                                        className={`flex-1 py-3 rounded-xl border font-bold text-sm transition-all ${answers[q.id] === true ? 'bg-indigo-600 border-indigo-400 text-white' : 'bg-slate-900 border-white/10 text-slate-400 hover:bg-white/[0.05]'}`}
                                                                     >
                                                                         Sí, por supuesto
                                                                     </button>
                                                                     <button
                                                                         onClick={() => setAnswers(prev => ({ ...prev, [q.id]: false }))}
-                                                                        className={`flex-1 py-3 rounded-xl border font-bold text-sm transition-all ${answers[q.id] === false ? 'bg-slate-700 border-slate-500 text-white' : 'bg-slate-900 border-white/10 text-slate-400 hover:bg-white/5'}`}
+                                                                        className={`flex-1 py-3 rounded-xl border font-bold text-sm transition-all ${answers[q.id] === false ? 'bg-slate-700 border-slate-500 text-white' : 'bg-slate-900 border-white/10 text-slate-400 hover:bg-white/[0.05]'}`}
                                                                     >
                                                                         Aún no
                                                                     </button>
@@ -416,13 +427,13 @@ export default function OnboardingDashboardPage() {
 
                                                     <div className="space-y-2">
                                                         <div className="text-3xl font-black tracking-tight text-white">{formData.botName || 'Representante Skylab'}</div>
-                                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+                                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/[0.05] border border-white/10 rounded-full">
                                                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">En Línea • Tono {formData.tone}</span>
                                                         </div>
                                                     </div>
 
-                                                    <div className="bg-white/5 border border-white/5 p-6 rounded-3xl w-full text-left relative overflow-hidden group/chat">
+                                                    <div className="bg-white/[0.05] border border-white/5 p-6 rounded-3xl w-full text-left relative overflow-hidden group/chat">
                                                         <div className="absolute left-0 top-0 w-1 h-full bg-indigo-500 opacity-50" />
                                                         <p className="text-sm font-medium text-slate-300 leading-relaxed italic">
                                                             &quot;{renderBotMessage()}&quot;
@@ -451,16 +462,15 @@ export default function OnboardingDashboardPage() {
                                         className={`w-full max-w-md p-1 items-center rounded-[64px] bg-gradient-to-br ${plan.color} relative overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.6)] group`}
                                     >
                                         <div className="bg-slate-950/80 backdrop-blur-xl m-[2px] rounded-[62px] p-12 space-y-10 relative overflow-hidden h-full">
-                                            <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 blur-3xl pointer-events-none" />
+                                            <div className="absolute top-0 right-0 w-48 h-48 bg-white/[0.05] blur-3xl pointer-events-none" />
 
                                             <div className="space-y-4 text-center">
                                                 <div className="text-[10px] font-black uppercase text-indigo-400 tracking-[0.4em]">{plan.sub}</div>
                                                 <div className="text-5xl font-black text-white tracking-tighter leading-none">{plan.name}</div>
-                                            </div>
-
-                                            <div className="py-8 border-y border-white/5 flex flex-col items-center text-center space-y-2">
-                                                <p className="text-6xl font-black text-white">{plan.price}</p>
-                                                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Inversión Mensual</p>
+                                                <div className="py-8 border-y border-white/5 flex flex-col items-center text-center space-y-2">
+                                                    <p className="text-6xl font-black text-white">{plan.price}</p>
+                                                    <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Inversión Mensual</p>
+                                                </div>
                                             </div>
 
                                             <div className="space-y-4">
@@ -471,28 +481,40 @@ export default function OnboardingDashboardPage() {
                                                     <Zap className="w-4 h-4 text-yellow-400" /> Prioridad de Inferencia Gold
                                                 </div>
                                                 {selectedTemplate && (
-                                                <div className="flex items-center gap-3 text-slate-400 text-sm font-semibold italic">
-                                                    <Bot className="w-4 h-4 text-indigo-400" /> Configuración: {selectedTemplate.vertical_name}
+                                                    <div className="flex items-center gap-3 text-slate-400 text-sm font-semibold italic">
+                                                        <Bot className="w-4 h-4 text-indigo-400" /> Configuración: {selectedTemplate.vertical_name}
+                                                    </div>
+                                                )}
+                                                <div className="pt-4 border-t border-white/5 flex gap-3 items-start text-left">
+                                                    <input 
+                                                        id="privacy-consent" 
+                                                        type="checkbox" 
+                                                        checked={acceptPrivacy} 
+                                                        onChange={(e) => setAcceptPrivacy(e.target.checked)} 
+                                                        className="w-5 h-5 rounded border-white/10 bg-slate-900 text-indigo-600 focus:ring-indigo-500 mt-1 cursor-pointer focus:ring-offset-slate-950" 
+                                                    />
+                                                    <label htmlFor="privacy-consent" className="text-[11px] text-slate-400 leading-snug font-medium select-none cursor-pointer">
+                                                        Acepto el procesamiento seguro de datos comerciales de acuerdo con las directrices de confidencialidad de Synerg-IA S.A.S.
+                                                    </label>
                                                 </div>
-                                                )}
-                                            </div>
 
-                                            <Button
-                                                onClick={handleFinalize}
-                                                disabled={isSaving}
-                                                className="w-full bg-white text-black hover:bg-slate-200 h-20 text-xl font-black rounded-[28px] shadow-2xl transition-all hover:scale-[1.02] active:scale-95 group-hover:shadow-indigo-500/20 disabled:opacity-50"
-                                            >
-                                                {isSaving ? (
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                                                        Sincronizando...
-                                                    </div>
-                                                ) : (
-                                                    <div className="flex items-center gap-3">
-                                                        Completar <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                                                    </div>
-                                                )}
-                                            </Button>
+                                                <Button
+                                                    onClick={handleFinalize}
+                                                    disabled={isSaving || !acceptPrivacy}
+                                                    className="w-full bg-white text-black hover:bg-slate-200 h-20 text-xl font-black rounded-[28px] shadow-2xl transition-all hover:scale-[1.02] active:scale-95 group-hover:shadow-indigo-500/20 disabled:opacity-50"
+                                                >
+                                                    {isSaving ? (
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                                            Sincronizando...
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex items-center gap-3">
+                                                            Completar <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                                                        </div>
+                                                    )}
+                                                </Button>
+                                            </div>
                                         </div>
                                     </motion.div>
 
@@ -517,7 +539,7 @@ export default function OnboardingDashboardPage() {
                                     variant="ghost"
                                     onClick={prevStep}
                                     disabled={currentStep === 0 || isSaving}
-                                    className="text-slate-500 hover:text-white font-black uppercase tracking-[0.3em] text-[10px] h-14 px-8 rounded-2xl gap-3 disabled:opacity-0 transition-all hover:bg-white/5"
+                                    className="text-slate-500 hover:text-white font-black uppercase tracking-[0.3em] text-[10px] h-14 px-8 rounded-2xl gap-3 disabled:opacity-0 transition-all hover:bg-white/[0.05]"
                                 >
                                     <ArrowLeft className="w-4 h-4" /> Atrás
                                 </Button>

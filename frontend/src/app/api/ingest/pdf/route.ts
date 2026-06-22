@@ -6,6 +6,16 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 // Inicializar el SDK GenAI de Google
 const genAI = new GoogleGenerativeAI((process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY) as string)
 
+function sanitizeSensitiveData(text: string): string {
+    let sanitized = text
+    // Enmascarar OpenAI keys, Gemini keys, tarjetas de crédito, JWTs
+    sanitized = sanitized.replace(/(sk-[a-zA-Z0-9]{32,})/g, '[LLAVE_API_REMOVIDA]')
+    sanitized = sanitized.replace(/(AIzaSy[a-zA-Z0-9-_]{33})/g, '[LLAVE_API_REMOVIDA]')
+    sanitized = sanitized.replace(/\b(?:\d[ -]*?){13,16}\b/g, '[TARJETA_CREDITO_REMOVIDA]')
+    sanitized = sanitized.replace(/eyJ[a-zA-Z0-9-_]+\.eyJ[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+/g, '[TOKEN_JWT_REMOVIDO]')
+    return sanitized
+}
+
 function chunkText(text: string, maxChunkSize: number = 800): string[] {
     const chunks = []
     let i = 0
@@ -55,6 +65,23 @@ export async function POST(req: Request) {
 
         const tenantId = tenantData.tenant_id
 
+        // 2.1 Verificar límites de cuotas del plan (Tiers)
+        const { data: tenantInfo, error: tenantInfoError } = await supabase
+            .from('tenants')
+            .select('max_docs, docs_count')
+            .eq('id', tenantId)
+            .single()
+
+        if (tenantInfoError || !tenantInfo) {
+            return NextResponse.json({ error: 'Error verificando límites de almacenamiento.' }, { status: 500 })
+        }
+
+        if (tenantInfo.docs_count >= tenantInfo.max_docs) {
+            return NextResponse.json({ 
+                error: `Límite de documentos alcanzado para tu plan actual (${tenantInfo.docs_count}/${tenantInfo.max_docs}). Por favor realiza un upgrade.` 
+            }, { status: 403 })
+        }
+
         // 3. Crear registro del documento
         const { data: doc, error: docError } = await supabase
             .from('knowledge_docs')
@@ -72,12 +99,12 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Error BD', details: docError.message }, { status: 500 })
         }
 
-        // 4. Convertir PDF a Texto usando Gemini 1.5 Flash
+        // 4. Convertir PDF a Texto usando Gemini 1.5 Flash (OCR Premium con directrices de confidencialidad)
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
         const arrayBuffer = await file.arrayBuffer()
         const base64Data = Buffer.from(arrayBuffer).toString('base64')
 
-        const prompt = "Actúa como un extractor de texto OCR premium. Extrae TODO el contenido de este PDF de forma estructurada. Ignora encabezados y pies de página repetitivos. Devuelve solo el texto limpio."
+        const prompt = "Actúa como un extractor de texto OCR premium de alta seguridad. Extrae todo el contenido de este PDF de forma estructurada. Ignora encabezados y pies de página repetitivos. IMPORTANTE: Por seguridad y confidencialidad, si encuentras credenciales, llaves de API, contraseñas en texto plano o números de tarjetas de crédito, no los extraigas y reemplázalos por la etiqueta [DATOS REMOVIDOS POR CONFIDENCIALIDAD]. Devuelve solo el texto limpio."
 
         const result = await model.generateContent([
             {
@@ -96,8 +123,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Gemini no pudo extraer suficiente texto del PDF' }, { status: 500 })
         }
 
-        // 5. Chunking y Vectorización
-        const chunks = chunkText(extractedText)
+        // 4.1 Sanitizar por segunda vez en el backend
+        const sanitizedText = sanitizeSensitiveData(extractedText)
+
+        // 5. Chunking y Vectorización del texto sanitizado
+        const chunks = chunkText(sanitizedText)
         const embeddingModel = genAI.getGenerativeModel({ model: "gemini-embedding-001" })
 
         const chunkInsertData = await Promise.all(
@@ -123,6 +153,12 @@ export async function POST(req: Request) {
         if (validChunks.length > 0) {
             await supabase.from('knowledge_chunks').insert(validChunks)
             await supabase.from('knowledge_docs').update({ status: 'active' }).eq('id', doc.id)
+            
+            // 5.1 Incrementar el contador de documentos en la tabla tenants
+            await supabase
+                .from('tenants')
+                .update({ docs_count: (tenantInfo.docs_count || 0) + 1 })
+                .eq('id', tenantId)
         } else {
             await supabase.from('knowledge_docs').update({ status: 'error' }).eq('id', doc.id)
             return NextResponse.json({ error: 'Fallo al vectorizar los fragmentos' }, { status: 500 })

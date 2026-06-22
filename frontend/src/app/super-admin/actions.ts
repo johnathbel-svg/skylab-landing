@@ -1,4 +1,4 @@
-"use server"
+﻿"use server"
 
 import { revalidatePath } from "next/cache"
 import { createClient } from "@/utils/supabase/server"
@@ -66,5 +66,61 @@ export async function forceUpdateSubscription(tenantId: string, formData: FormDa
 
     revalidatePath('/super-admin')
     revalidatePath(`/super-admin/tenants/${tenantId}`)
+    return { success: true }
+}
+
+export async function toggleSystemConfig(key: string, enabled: boolean) {
+    const supabase = await createClient()
+    const { error } = await supabase
+        .from('system_config')
+        .update({ value: enabled, updated_at: new Date().toISOString() })
+        .eq('key', key)
+
+    if (error) {
+        console.error("Master Control Error (Toggle System Config):", error.message)
+        return { success: false, error: "Operation failed. " + error.message }
+    }
+
+    revalidatePath('/super-admin/metrics')
+    return { success: true }
+}
+
+export async function impersonateTenant(tenantId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { success: false, error: "Unauthorized" }
+
+    const { data: superAdmin } = await supabase
+        .from('super_admins')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+    if (!superAdmin) {
+        return { success: false, error: "Only super administrators can impersonate tenants." }
+    }
+
+    const { cookies } = await import('next/headers')
+    const cookieStore = await cookies()
+    cookieStore.set('impersonate_tenant_id', tenantId, {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24
+    })
+
+    revalidatePath('/super-admin')
+    revalidatePath('/dashboard')
+    return { success: true }
+}
+
+export async function stopImpersonation() {
+    const { cookies } = await import('next/headers')
+    const cookieStore = await cookies()
+    cookieStore.delete('impersonate_tenant_id')
+
+    revalidatePath('/super-admin')
+    revalidatePath('/dashboard')
     return { success: true }
 }

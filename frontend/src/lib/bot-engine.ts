@@ -40,7 +40,7 @@ export async function processBotMessage(
         tenantId: string;
         botId: string;
         messages: BotMessage[];
-        channel: 'web' | 'telegram' | 'whatsapp' | 'instagram';
+        channel: 'web' | 'telegram' | 'whatsapp' | 'instagram' | 'messenger';
         contactId?: string;
         platformId?: string;
         streamResponse?: boolean;
@@ -148,14 +148,14 @@ export async function processBotMessage(
             // Inyectar Catálogo Optimizado
             const { data: products } = await supabase
                 .from('products')
-                .select('name, description, price, image_url, category')
+                .select('name, description, price, image_url')
                 .or(`bot_id.is.null,bot_id.eq.${botId}`);
 
             if (products && products.length > 0) {
                 const copsFormatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 
                 // Agrupar por categorías para que la IA entienda la estructura
-                const categories = Array.from(new Set(products.map(p => p.category || 'Otros')));
+                const categories = Array.from(new Set(products.map(() => 'Otros')));
                 ragContext += `\n--- 📂 CATEGORÍAS DISPONIBLES ---\n${categories.join(', ')}\n`;
 
                 let catalogStr = "\n--- 🛒 DETALLE DEL CATÁLOGO (Usa estas URLs para fotos o info) ---\n";
@@ -170,7 +170,7 @@ export async function processBotMessage(
                     const isImage = fullImageUrl && /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(fullImageUrl.split('?')[0]);
                     const formatPrefix = isImage ? "URL_FOTO" : "LINK_INFO";
 
-                    catalogStr += `- [${p.category || 'Otros'}] ${p.name}: ${copsFormatter.format(p.price)} - ${p.description || ''} (${formatPrefix}: ${fullImageUrl || 'N/A'})\n`;
+                    catalogStr += `- [Otros] ${p.name}: ${copsFormatter.format(p.price)} - ${p.description || ''} (${formatPrefix}: ${fullImageUrl || 'N/A'})\n`;
                 });
                 ragContext += catalogStr + "\n";
             }
@@ -245,6 +245,7 @@ REGLAS DE ORO DE INTELIGENCIA:
 2. LINKS DE INFO: Si el producto tiene un "LINK_INFO" (y no URL_FOTO), entrégalo como un link normal de texto.
 3. MEMORIA: Responde a la ÚLTIMA pregunta del historial. 
 4. SALUDO: ${isFirstMessage ? 'NUEVA CHARLA: Saluda según tu personalidad.' : 'SIN RE-SALUDOS: Ya estás hablando con el cliente.'}
+5. CONCISIÓN EXTREMA: Responde de forma muy corta, resumida, directa y al grano. Evita explicaciones largas o párrafos extensos. Limita tu respuesta a un máximo de 2 o 3 oraciones por mensaje.
 
 REGLAS DE CATÁLOGO:
 - SI HAY URL_FOTO: Usa el formato ![Nombre](URL_FOTO).
@@ -264,9 +265,10 @@ ROL PERSONALIZADO: ${botData?.system_prompt || `Asesor ${industry} enfocado en a
 `;
 
     const modelsToTry = [
-        'gemini-1.5-flash-latest',
-        'gemini-1.5-pro-latest',
-        'gemini-pro'
+        'gemini-2.5-flash',
+        'gemini-2.0-flash',
+        'gemini-1.5-flash',
+        'gemini-1.5-pro'
     ];
     let lastError: any = null;
 
@@ -277,7 +279,7 @@ ROL PERSONALIZADO: ${botData?.system_prompt || `Asesor ${industry} enfocado en a
                 systemInstruction: promptWrapper
             });
 
-            let rolesAlt = [];
+            let rolesAlt: any[] = [];
             for (const m of contextMessages) {
                 const r = m.role === 'user' ? 'user' : 'model';
                 if (rolesAlt.length > 0 && rolesAlt[rolesAlt.length - 1].role === r) {

@@ -38,7 +38,7 @@ export async function POST(req: Request) {
             tenantId: botData.tenant_id,
             botId,
             messages,
-            channel: 'web_widget',
+            channel: 'web',
             platformId: sessionId,
             streamResponse: true 
         });
